@@ -25,11 +25,23 @@ For the full list of available adapters please refer to the official
 
 # Usage
 
+## Creating the tasks
+
+
+## Creating the Airflow DAG for your dbt environment
+
 
 ---
 
 # Contributing
-If you wish to contribute to this project, you first need to setup a proper development environment where
+If you would like to contribute to `dbt-airflow` project, you will essentially need to follow the steps outlined below:
+1. Create a fork of the repository
+2. Set up the development environment on your local machine (see the detailed guide below)
+3. Write and test your contribution
+4. Create a Pull Request
+
+##  Setting up your local development environment
+In order to be able to contribute to the project, you need to set up a proper development environment where
 you will be able to install all the dependencies required in order to run and test new functionality or bug fixes. 
 
 To do so, you first need to create and then activate a virtual environment:
