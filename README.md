@@ -58,7 +58,7 @@ in your local environment. Apart from project dependencies, you also need to ins
 
 You can do so using the `-e` (or `--editable`) flag when installing the package through `pip`:
 ```bash
-pip install -e .[test]
+python3 -m pip install -e .[test]
 ```
 
 The above command will install all the dependencies specified in `install_requires` of setup files as well as the 
