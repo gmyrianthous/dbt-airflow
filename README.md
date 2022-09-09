@@ -53,10 +53,13 @@ $ source ~/dbt-airflow-venv/bin/activate
 Now once you have activated your environment, you'll then need to install `dbt-airflow` in **editable mode**. 
 When this mode is activated, the package will be linked to the specified directory (which should be the directory 
 containing the package under development) such that any changes made in the package will be reflected directly 
-in your local environment. 
+in your local environment. Apart from project dependencies, you also need to install the extra `test` dependencies 
+(these are dependencies  which are used as part of testing, such as `pytest`).
 
-You can do so using the `-e` (or `--editable`) flag when instlling the package through `pip`:
+You can do so using the `-e` (or `--editable`) flag when installing the package through `pip`:
 ```bash
-pip install -e .
+pip install -e .[test]
 ```
 
+The above command will install all the dependencies specified in `install_requires` of setup files as well as the 
+`extras_require.test` dependencies.
