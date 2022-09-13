@@ -6,7 +6,7 @@ import json
 import logging
 import os
 
-from exceptions import ManifestNotFound
+from dbt_airflow.exceptions import ManifestNotFound
 
 
 class ManifestProcessor:
