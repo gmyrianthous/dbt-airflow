@@ -24,6 +24,7 @@ For the full list of available adapters please refer to the official
 ---
 
 # Usage
+In order to 
 
 ## Creating the tasks
 
