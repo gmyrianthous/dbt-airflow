@@ -49,4 +49,6 @@ jobs:
           pytest tests/ -rP -vv
 
       - name: Run mypy
-        run: mypy dbt_airflow/
+        run: |
+          source venv/bin/activate
+          mypy dbt_airflow/
