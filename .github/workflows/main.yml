@@ -44,7 +44,9 @@ jobs:
           pip install -e ".[test]"
 
       - name: Run tests
-        run: pytest tests/ -rP -vv
+        run: |
+          source venv/bin/activate
+          pytest tests/ -rP -vv
 
       - name: Run mypy
         run: mypy dbt_airflow/
