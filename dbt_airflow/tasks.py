@@ -1,7 +1,7 @@
 import json
 import os
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 from dbt_airflow.exceptions import TaskGroupExtractionError
 
@@ -129,7 +129,7 @@ class Task:
         return node_type
 
     @staticmethod
-    def get_task_group(node_details: dict[str, Any], idx: Optional[int] = -2) -> str:
+    def get_task_group(node_details: Dict[str, Any], idx: Optional[int] = -2) -> str:
         """
         The task group logic is based on the structure of a dbt project. This structure is
         specified in the `fqn` key that each of the nodes has in manifest.json file.
@@ -145,7 +145,7 @@ class Task:
             )
 
 
-class TaskList(list):
+class TaskList(List):
     """
     A collection of dbt-airflow tasks
     """
@@ -176,3 +176,15 @@ class TaskList(list):
         with open(path, 'w') as f:
             tasks_dict = [task.to_dict() for task in self]
             json.dump(tasks_dict, f, indent=4, default=str)
+
+    def get_statistics(self) -> Dict[str, int]:
+        """
+        Returns counts per node type in the resulting TaskList
+        """
+        node_types = [task.dbt_command for task in self]
+        return {
+            'models': node_types.count('run'),
+            'tests': node_types.count('test'),
+            'snapshots': node_types.count('snapshot'),
+            'seeds': node_types.count('seed'),
+        }

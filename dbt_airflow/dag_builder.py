@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict
 
 from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup

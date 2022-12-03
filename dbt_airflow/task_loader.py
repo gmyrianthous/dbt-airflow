@@ -96,6 +96,13 @@ class TaskLoader:
 
         self._fix_dependencies()
 
+        logging.info(f'Created a TaskList of: {self.tasks.get_statistics()}')
+        logging.warning(
+            'The number of tests created could less of the original number of tests reported in '
+            'manifest file. This is due to the fact that the resulting Airflow DAG will only '
+            'create a single test task, to execute all the tests for a particular model, '
+            'snapshot or seed.'
+        )
         return self.tasks
 
     def _create_task(
