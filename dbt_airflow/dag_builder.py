@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict
 
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.task_group import TaskGroup
 
 from dbt_airflow.tasks import TaskList

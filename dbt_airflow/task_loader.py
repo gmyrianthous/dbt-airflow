@@ -33,8 +33,8 @@ class TaskLoader:
     def __init__(
         self,
         manifest_path: str,
-        create_task_groups: Optional[bool] = False,
-        task_group_folder_depth: Optional[int] = -2,
+        create_task_groups: bool = False,
+        task_group_folder_depth: int = -2,
     ):
         self.tasks = TaskList()
         self.path = os.path.abspath(manifest_path)
@@ -130,7 +130,7 @@ class TaskLoader:
             test_task = Task(
                 model_name=task.model_name,
                 dbt_command=DbtNodeType.TEST.value,
-                dbt_node_name=None,
+                dbt_node_name='',
                 upstream_tasks={task.name},
                 task_group=task.task_group if create_task_group else None,
             )

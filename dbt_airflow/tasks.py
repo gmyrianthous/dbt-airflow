@@ -63,7 +63,7 @@ class Task:
     def create_task_from_manifest_node(
         cls,
         node_name: str,
-        node_details: dict[str, Any],
+        node_details: Dict[str, Any],
         create_task_group: bool,
         task_group_folder_depth: int,
     ):
@@ -83,7 +83,10 @@ class Task:
                     DbtNodeType.SNAPSHOT.value,
                 ]
             ),
-            task_group=cls.get_task_group(node_details, task_group_folder_depth) if create_task_group else None,
+            task_group=(
+               cls.get_task_group(node_details, task_group_folder_depth)
+               if create_task_group else None
+            ),
         )
 
     @staticmethod
@@ -126,7 +129,7 @@ class Task:
         return node_type
 
     @staticmethod
-    def get_task_group(node_details: Dict[str, Any], idx: Optional[int] = -2) -> str:
+    def get_task_group(node_details: Dict[str, Any], idx: int = -2) -> str:
         """
         The task group logic is based on the structure of a dbt project. This structure is
         specified in the `fqn` key that each of the nodes has in manifest.json file.
@@ -150,7 +153,7 @@ class TaskList(List):
     #     if __object in self:
     #         raise ValueError('test')
 
-    def find_task_by_name(self, name: str) -> Optional[Task]:
+    def find_task_by_name(self, name: str) -> Task:
         """
         Returns the task within the TaskList whose name is equal to the input `name`.
         If no task is found with the given name, then `None` is returned.
@@ -158,6 +161,8 @@ class TaskList(List):
         for task in self:
             if task.name == name:
                 return task
+
+        raise ValueError(f'Task with name {name} was not found.')
 
     def write_to_file(self, path: str) -> None:
         """
