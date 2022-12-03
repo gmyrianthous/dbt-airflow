@@ -65,6 +65,7 @@ class Task:
         node_name: str,
         node_details: dict[str, Any],
         create_task_group: bool,
+        task_group_folder_depth: int,
     ):
         """
         Given a dbt node as specified in manifest.json file, construct a Task instance
@@ -82,7 +83,7 @@ class Task:
                     DbtNodeType.SNAPSHOT.value,
                 ]
             ),
-            task_group=cls.get_task_group(node_details) if create_task_group else None,
+            task_group=cls.get_task_group(node_details, task_group_folder_depth) if create_task_group else None,
         )
 
     @staticmethod
@@ -129,11 +130,10 @@ class Task:
         """
         The task group logic is based on the structure of a dbt project. This structure is
         specified in the `fqn` key that each of the nodes has in manifest.json file.
-
-        TODO: Consider moving this option to argparse
         """
         try:
-            return node_details['fqn'][-2]
+            # Eliminate duplicates but persist order
+            return list(dict.fromkeys(node_details['fqn']))[idx]
         except IndexError:
             raise TaskGroupExtractionError(
                 f"Task Group cannot be extracted from fqn "

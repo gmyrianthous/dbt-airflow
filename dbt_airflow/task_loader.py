@@ -92,7 +92,9 @@ class TaskLoader:
                 DbtNodeType.SNAPSHOT.value,
                 DbtNodeType.SEED.value,
             ]:
-                self._create_task(node_name, node_details, self.create_task_groups)
+                self._create_task(
+                    node_name, node_details, self.create_task_groups, self.task_group_folder_depth
+                )
 
         self._fix_dependencies()
 
@@ -110,6 +112,7 @@ class TaskLoader:
         node_name: str,
         node_details: Dict[str, Any],
         create_task_group: bool,
+        task_group_folder_depth: int,
     ) -> None:
         """
         Create a task for a model(run), snapshot or seed. If the model also has tests, create
@@ -119,18 +122,19 @@ class TaskLoader:
             node_name=node_name,
             node_details=node_details,
             create_task_group=create_task_group,
+            task_group_folder_depth=task_group_folder_depth,
         )
         self.tasks.append(task)
 
         if task.dbt_node_name in self.test_deps:
-            task = Task(
+            test_task = Task(
                 model_name=task.model_name,
                 dbt_command=DbtNodeType.TEST.value,
                 dbt_node_name=None,
                 upstream_tasks={task.name},
                 task_group=task.task_group if create_task_group else None,
             )
-            self.tasks.append(task)
+            self.tasks.append(test_task)
 
     def _fix_dependencies(self) -> None:
         """

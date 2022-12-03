@@ -5,14 +5,11 @@ TODO:
             1. --create-task-groups
             2. --manifest-path
             3. --task-group-folder-depth
-            4. --log-level
             5. --write-output-to-file
             6. --output-path
 
-To fix:
-    - Task Groups for tests
-    -
 To add:
+    - Unit tests
     - How to include additional Airflow dependencies (external to dbt)
 
 """
@@ -40,8 +37,6 @@ def main():
     )
     task_list = task_loader.create_tasks()
 
-    # if write_output_to_file:
-    #   write output to output_path
     task_list.write_to_file('output.json')
     print(len(task_list))
     logger.info('Done')
