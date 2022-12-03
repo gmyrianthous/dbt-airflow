@@ -19,9 +19,28 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+      - name: Cache virtual environment
+        uses: actions/cache@v3
+        id: cache-pip-venv
+        with:
+          path: venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.cfg') }}
 
       - name: Install dependencies
+        if: steps.cache-pip-venv.outputs.cache-hit != 'true'
         run: |
+          # Check if venv exists (restored from secondary keys if any, and delete)
+          if [ -d "venv" ]; then rm -rf venv; fi
+          
+          # Re-create the venv
+          python3 -m venv venv
+      
+          # Activate venv
+          source venv/bin/activate
+          
+          # Install test dependencies
           pip install --upgrade pip
           pip install -e ".[test]"
 
@@ -29,4 +48,4 @@ jobs:
         run: pytest tests/ -rP -vv
 
       - name: Run mypy
-        run: mypy dbt_airflow
+        run: mypy dbt_airflow/
