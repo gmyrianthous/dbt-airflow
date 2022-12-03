@@ -18,7 +18,7 @@ import json
 import logging
 import os
 
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, Set
 
 from dbt_airflow.exceptions import (
     ManifestNotFound,
