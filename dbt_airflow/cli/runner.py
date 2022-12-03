@@ -16,7 +16,7 @@ To add:
 import logging
 import sys
 
-from dbt_airflow.task_loader import TaskLoader
+from dbt_airflow.domain.task_loader import TaskLoader
 
 
 logger = logging.getLogger()

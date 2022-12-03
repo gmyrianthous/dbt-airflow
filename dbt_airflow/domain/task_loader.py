@@ -20,12 +20,12 @@ import os
 
 from typing import Any, Dict, Set
 
-from dbt_airflow.exceptions import (
+from ..exceptions import (
     ManifestNotFound,
     ManifestDataNotFound,
     InvalidDbtCommand,
 )
-from dbt_airflow.tasks import DbtNodeType, Task, TaskList
+from .tasks import DbtNodeType, Task, TaskList
 
 
 class TaskLoader:

@@ -1,6 +1,6 @@
 import json
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from dbt_airflow.exceptions import TaskGroupExtractionError
 
@@ -29,7 +29,7 @@ class Task:
         model_name: str,
         dbt_node_name: str,
         dbt_command: str,
-        upstream_tasks: set,
+        upstream_tasks: Set[str],
         task_group: Optional[str],
     ):
         self.model_name = model_name
