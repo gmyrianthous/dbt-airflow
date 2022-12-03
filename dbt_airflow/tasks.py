@@ -1,10 +1,14 @@
+import json
+import os
 from enum import Enum
 from typing import Any, Optional
+
+from dbt_airflow.exceptions import TaskGroupExtractionError
 
 
 class DbtNodeType(Enum):
     """
-    TODO
+    Each dbt node could be of one of the specified types within this Enum class.
     """
     MODEL = 'model'
     TEST = 'test'
@@ -12,7 +16,18 @@ class DbtNodeType(Enum):
     SEED = 'seed'
 
 
+class DbtNode:
+    pass
+
+
 class Task:
+    """
+    Corresponds to a single Task as this is understood within the context of
+    dbt-airflow (not to be confused with Airflow Tasks).
+
+    This is an internal convention that is used to represent a single task
+    that is extracted from manifest.json file.
+    """
 
     def __init__(
         self,
@@ -23,16 +38,22 @@ class Task:
         task_group: Optional[str],
     ):
         self.model_name = model_name
-        self.dbt_node_name = dbt_node_name
         self.dbt_command = dbt_command
+        self.dbt_node_name = dbt_node_name
+        self.name = f'{self.dbt_command}_{self.model_name}'
         self.upstream_tasks = upstream_tasks
         self.task_group = task_group
-        self.name = f'{self.dbt_command}_{self.model_name}'
 
-    def __str__(self):
-        return f'{self.name}, Deps: {self.upstream_tasks}'
+    def __str__(self) -> str:
+        return self.name
+
+    def __eq__(self, other) -> bool:
+        return self.name == other.name
 
     def to_dict(self):
+        """
+        Returns the task info as a dictionary.
+        """
         return {
             'task_name': self.name,
             'model_name': self.model_name,
@@ -43,7 +64,12 @@ class Task:
         }
 
     @classmethod
-    def create_task_from_manifest_node(cls, node_name: str, node_details: dict[str, Any]):
+    def create_task_from_manifest_node(
+        cls,
+        node_name: str,
+        node_details: dict[str, Any],
+        create_task_group: bool,
+    ):
         """
         Given a dbt node as specified in manifest.json file, construct a Task instance
         """
@@ -60,11 +86,15 @@ class Task:
                     DbtNodeType.SNAPSHOT.value,
                 ]
             ),
-            task_group=cls.get_task_group(node_details),
+            task_group=cls.get_task_group(node_details) if create_task_group else None,
         )
 
     @staticmethod
-    def create_task_name_from_node_name(node_name):
+    def create_task_name_from_node_name(node_name: str) -> str:
+        """
+        Constructs and returns a task name from the input node name
+        in the form `<dbt-command>_<model_name>` (e.g. `run_my_model`)
+        """
         return f'{Task.get_dbt_command(node_name)}_{Task.get_model_name(node_name)}'
 
     @staticmethod
@@ -99,25 +129,50 @@ class Task:
         return node_type
 
     @staticmethod
-    def get_task_group(node_details: dict[str, Any]) -> str:
+    def get_task_group(node_details: dict[str, Any], idx: Optional[int] = -2) -> str:
         """
+        The task group logic is based on the structure of a dbt project. This structure is
+        specified in the `fqn` key that each of the nodes has in manifest.json file.
+
         TODO: Consider moving this option to argparse
         """
-        return node_details['fqn'][1]
+        try:
+            return node_details['fqn'][-2]
+        except IndexError:
+            raise TaskGroupExtractionError(
+                f"Task Group cannot be extracted from fqn "
+                f"{node_details['fqn']} with index index {idx}."
+            )
 
 
 class TaskList(list):
     """
-
+    A collection of dbt-airflow tasks
     """
-    def find_task_by_name(self, name: str) -> Task:
+    # TODO: Prevent adding tasks of the same name i.e. which are __eq__(ual)
+    # def append(self, __object: _T) -> None:
+    #     if __object in self:
+    #         raise ValueError('test')
+
+    def build_airflow_dependencies(self):
+        # for task in self:
+        #     pass
+        pass
+
+    def find_task_by_name(self, name: str) -> Optional[Task]:
+        """
+        Returns the task within the TaskList whose name is equal to the input `name`.
+        If no task is found with the given name, then `None` is returned.
+        """
         for task in self:
             if task.name == name:
                 return task
 
-    @classmethod
-    def find_tasks_by_model_name(cls, model_name: str):
-        pass
-
-    def find_task_by_model_name_and_dbt_command(self, model_name: str, dbt_command: str):
-        pass
+    def write_to_file(self, path: str) -> None:
+        """
+        Dumps tasks in list as json into the specified path
+        """
+        # os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w') as f:
+            tasks_dict = [task.to_dict() for task in self]
+            json.dump(tasks_dict, f, indent=4, default=str)

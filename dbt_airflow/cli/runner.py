@@ -3,9 +3,15 @@ TODO:
     - Create argparser
         - flags:
             1. --create-task-groups
-            2. --task-group-folder-depth
-            2. --log-level
-            3. --output-path
+            2. --manifest-path
+            3. --task-group-folder-depth
+            4. --log-level
+            5. --write-output-to-file
+            6. --output-path
+
+To fix:
+    - Task Groups for tests
+    -
 """
 import logging
 import sys
@@ -24,7 +30,15 @@ logger.addHandler(handler)
 
 
 def main():
-    task_loader = TaskLoader()
-    task_loader.create_tasks()
-    task_loader.write_to_file()
+    task_loader = TaskLoader(
+        manifest_path='example_targets/large/target/manifest.json',
+        create_task_groups=True,
+        task_group_folder_depth=-2,
+    )
+    task_list = task_loader.create_tasks()
+
+    # if write_output_to_file:
+    #   write output to output_path
+    task_list.write_to_file('output.json')
+    print(len(task_list))
     logger.info('Done')

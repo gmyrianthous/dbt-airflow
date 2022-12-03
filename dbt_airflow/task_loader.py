@@ -18,7 +18,7 @@ import json
 import logging
 import os
 
-from typing import Any
+from typing import Any, Optional
 
 from dbt_airflow.exceptions import (
     ManifestNotFound,
@@ -30,17 +30,19 @@ from dbt_airflow.tasks import DbtNodeType, Task, TaskList
 
 class TaskLoader:
 
-    def __init__(self):
+    def __init__(
+        self,
+        manifest_path: str,
+        create_task_groups: Optional[bool] = False,
+        task_group_folder_depth: Optional[int] = -2,
+    ):
         self.tasks = TaskList()
-        self.path = os.path.abspath('target/manifest.json')
+        self.path = os.path.abspath(manifest_path)
+        self.create_task_groups = create_task_groups
+        self.task_group_folder_depth = task_group_folder_depth
+
         self.data = self.load_manifest()
         self.test_deps = self.load_test_dependencies()
-
-        # TODO: Coming from argparse through constructor
-        # self.output_path = None
-        # self.task_group_folder_depth = None
-        # self.log_level = None
-        # self.create_task_groups = None
 
     def load_test_dependencies(self) -> set:
         """
@@ -50,8 +52,9 @@ class TaskLoader:
         """
         test_deps = set()
         for node, node_details in self.data['nodes'].items():
-            upstream_dependencies = node_details['depends_on']['nodes']
-            test_deps.update(upstream_dependencies)
+            if node_details['resource_type'] == DbtNodeType.TEST.value:
+                upstream_dependencies = node_details['depends_on']['nodes']
+                test_deps.update(upstream_dependencies)
         return test_deps
 
     def load_manifest(self) -> dict:
@@ -74,14 +77,10 @@ class TaskLoader:
 
         return data
 
-    def write_to_file(self):
-        # os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open('output.json', 'w') as f:
-            json.dump([task.to_dict() for task in self.tasks], f, indent=4, default=str)
-
-    def create_tasks(self):
+    def create_tasks(self) -> TaskList:
         """
-        TODO
+        Returns a TaskList instance consisting of the tasks created out of the
+        input dbt manifest JSON file.
         """
         logging.info('Creating tasks from manifest data')
         if not self.data:
@@ -93,24 +92,38 @@ class TaskLoader:
                 DbtNodeType.SNAPSHOT.value,
                 DbtNodeType.SEED.value,
             ]:
-                self._create_task(node_name, node_details)
+                self._create_task(node_name, node_details, self.create_task_groups)
 
         self._fix_dependencies()
 
-    def _create_task(self, node_name, node_details):
-        task = Task.create_task_from_manifest_node(node_name, node_details)
+        return self.tasks
+
+    def _create_task(
+        self,
+        node_name: str,
+        node_details: dict[str, Any],
+        create_task_group: bool,
+    ) -> None:
+        """
+        Create a task for a model(run), snapshot or seed. If the model also has tests, create
+        an additional test node
+        """
+        task = Task.create_task_from_manifest_node(
+            node_name=node_name,
+            node_details=node_details,
+            create_task_group=create_task_group,
+        )
         self.tasks.append(task)
 
         if task.dbt_node_name in self.test_deps:
-            self.tasks.append(
-                Task(
-                    model_name=task.model_name,
-                    dbt_command=DbtNodeType.TEST.value,
-                    dbt_node_name=None,
-                    upstream_tasks={task.name},
-                    task_group=task.task_group,
-                )
+            task = Task(
+                model_name=task.model_name,
+                dbt_command=DbtNodeType.TEST.value,
+                dbt_node_name=None,
+                upstream_tasks={task.name},
+                task_group=task.task_group if create_task_group else None,
             )
+            self.tasks.append(task)
 
     def _fix_dependencies(self) -> None:
         """
@@ -122,6 +135,7 @@ class TaskLoader:
 
         Note:
             - The upstream dependencies of test tasks are already correct, since we created them
+                and they were not read by the manifest file
         """
         for task in self.tasks:
             if task.dbt_command == DbtNodeType.TEST.value:
@@ -150,6 +164,10 @@ class TaskLoader:
 
     @staticmethod
     def get_manifest_statistics(data: dict[str, Any]) -> dict[str, int]:
+        """
+        Returns the counts per node type found in the original manifest.json file, as generated
+        by dbt commands.
+        """
         node_types = [Task.get_node_type(n) for n in data['nodes']]
         return {
             'models': node_types.count('model'),

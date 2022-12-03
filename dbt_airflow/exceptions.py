@@ -20,3 +20,13 @@ class DbtCommandNotSupported(DbtAirflowException):
 class InvalidDbtCommand(DbtAirflowException):
     """Raised when the given task has an unexpected dbt command"""
     pass
+
+
+class DuplicateTaskName(DbtAirflowException):
+    """Raised when a duplicate task is identified within a TaskList"""
+    pass
+
+
+class TaskGroupExtractionError(DbtAirflowException):
+    """Raised when a Task Group cannot be extracted using the input index provided"""
+    pass
