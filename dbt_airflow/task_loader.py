@@ -18,7 +18,7 @@ import json
 import logging
 import os
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Set
 
 from dbt_airflow.exceptions import (
     ManifestNotFound,
@@ -44,7 +44,7 @@ class TaskLoader:
         self.data = self.load_manifest()
         self.test_deps = self.load_test_dependencies()
 
-    def load_test_dependencies(self) -> set:
+    def load_test_dependencies(self) -> Set:
         """
         Loads all the dependencies found in test nodes within manifest file.
         This set of dependencies is then used to determine whether a test task should be created
@@ -57,7 +57,7 @@ class TaskLoader:
                 test_deps.update(upstream_dependencies)
         return test_deps
 
-    def load_manifest(self) -> dict:
+    def load_manifest(self) -> Dict:
         """
         Loads the manifest.json file created by dbt
         """
@@ -108,7 +108,7 @@ class TaskLoader:
     def _create_task(
         self,
         node_name: str,
-        node_details: dict[str, Any],
+        node_details: Dict[str, Any],
         create_task_group: bool,
     ) -> None:
         """
@@ -170,7 +170,7 @@ class TaskLoader:
                 task.upstream_tasks.add(test_task.name)
 
     @staticmethod
-    def get_manifest_statistics(data: dict[str, Any]) -> dict[str, int]:
+    def get_manifest_statistics(data: Dict[str, Any]) -> Dict[str, int]:
         """
         Returns the counts per node type found in the original manifest.json file, as generated
         by dbt commands.

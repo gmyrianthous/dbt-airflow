@@ -12,6 +12,9 @@ TODO:
 To fix:
     - Task Groups for tests
     -
+To add:
+    - How to include additional Airflow dependencies (external to dbt)
+
 """
 import logging
 import sys

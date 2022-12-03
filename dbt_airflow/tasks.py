@@ -16,10 +16,6 @@ class DbtNodeType(Enum):
     SEED = 'seed'
 
 
-class DbtNode:
-    pass
-
-
 class Task:
     """
     Corresponds to a single Task as this is understood within the context of
@@ -153,11 +149,6 @@ class TaskList(List):
     # def append(self, __object: _T) -> None:
     #     if __object in self:
     #         raise ValueError('test')
-
-    def build_airflow_dependencies(self):
-        # for task in self:
-        #     pass
-        pass
 
     def find_task_by_name(self, name: str) -> Optional[Task]:
         """
