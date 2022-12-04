@@ -64,7 +64,7 @@ class Task:
         node_name: str,
         node_details: Dict[str, Any],
         create_task_group: bool,
-        task_group_folder_depth: int,
+        task_group_folder_depth: int = -2,
     ):
         """
         Given a dbt node as specified in manifest.json file, construct a Task instance
@@ -73,15 +73,7 @@ class Task:
             model_name=cls.get_model_name(node_name),
             dbt_node_name=node_name,
             dbt_command=cls.get_dbt_command(node_name),
-            upstream_tasks=set(
-                Task.create_task_name_from_node_name(node_name)
-                for node_name in node_details['depends_on']['nodes']
-                if Task.get_node_type(node_name) in [
-                    DbtNodeType.MODEL.value,
-                    DbtNodeType.SEED.value,
-                    DbtNodeType.SNAPSHOT.value,
-                ]
-            ),
+            upstream_tasks=cls.get_upstream_dependencies(node_details),
             task_group=(
                cls.get_task_group(node_details, task_group_folder_depth)
                if create_task_group else None
@@ -141,6 +133,21 @@ class Task:
                 f"Task Group cannot be extracted from fqn "
                 f"{node_details['fqn']} with index index {idx}."
             )
+
+    @staticmethod
+    def get_upstream_dependencies(node_details: Dict[str, Any]) -> Set[str]:
+        """
+        Extracts upstream dependencies from the input `node_details`.
+        """
+        return {
+            Task.create_task_name_from_node_name(node_name)
+            for node_name in node_details['depends_on']['nodes']
+            if Task.get_node_type(node_name) in [
+                DbtNodeType.MODEL.value,
+                DbtNodeType.SEED.value,
+                DbtNodeType.SNAPSHOT.value,
+            ]
+        }
 
 
 class TaskList(List):

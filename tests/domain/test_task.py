@@ -1,3 +1,5 @@
+import pytest
+
 from dbt_airflow.domain.tasks import Task
 
 
@@ -38,3 +40,76 @@ def test_task_to_dict(mock_test_task, mock_run_task):
     }
     actual = mock_test_task.to_dict()
     assert expected == actual
+
+
+def test_create_task_from_manifest_node_model():
+    manifest_node_name = 'model.my_profile.my_model'
+    manifest_node_details = {
+        'raw_sql': 'SELECT * FROM one_table;',
+        'compiled': True,
+        'resource_type': 'model',
+        'depends_on': {
+            'macros': [],
+            'nodes': [
+                'model.my_profile.another_model',
+                'model.my_profile.third_model',
+            ]
+        },
+        'database': 'my_database',
+        'schema': 'my_schema',
+        'fqn': [
+            'my_profile',
+            'marts',
+            'finance',
+            'my_model'
+        ]
+    }
+
+    actual = Task.create_task_from_manifest_node(manifest_node_name, manifest_node_details, True)
+    expected = Task(
+        model_name='my_model',
+        dbt_node_name=manifest_node_name,
+        dbt_command='run',
+        upstream_tasks={'model.my_profile.another_model', 'model.my_profile.third_model'},
+        task_group='finance',
+    )
+
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    'node_name, expected', [
+        pytest.param('model.my_profile.my_model', 'run_my_model', id='model'),
+        pytest.param('snapshot.my_profile.my_model', 'snapshot_my_model', id='snapshot'),
+        pytest.param('seed.my_profile.users_csv', 'seed_users_csv', id='seed'),
+    ]
+)
+def test_create_task_name_from_node_node(node_name, expected):
+    actual = Task.create_task_name_from_node_name(node_name)
+    assert actual == expected
+
+
+def test_get_model_name():
+    node_name = 'model.my_profile.my_model'
+    expected = 'my_model'
+    actual = Task.get_model_name(node_name)
+    assert actual == expected
+
+
+def test_get_node_type():
+    node_name = 'model.my_profile.my_model'
+    expected = 'model'
+    actual = Task.get_node_type(node_name)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    'node_name, expected', [
+        pytest.param('model.my_profile.my_model', 'run', id='model run'),
+        pytest.param('snapshot.my_profile.my_model', 'snapshot', id='snapshot remains snapshot'),
+        pytest.param('seed.my_profile.users_csv', 'seed', id='seed remains seed'),
+    ]
+)
+def test_get_dbt_command(node_name, expected):
+    actual = Task.get_dbt_command(node_name)
+    assert actual == expected

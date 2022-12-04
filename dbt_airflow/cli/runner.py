@@ -31,7 +31,7 @@ logger.addHandler(handler)
 
 def main():
     task_loader = TaskLoader(
-        manifest_path='example_targets/large/target/manifest.json',
+        manifest_path='example_targets/medium/target/manifest.json',
         create_task_groups=True,
         task_group_folder_depth=-2,
     )

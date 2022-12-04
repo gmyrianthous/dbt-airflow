@@ -20,11 +20,7 @@ import os
 
 from typing import Any, Dict, Set
 
-from ..exceptions import (
-    ManifestNotFound,
-    ManifestDataNotFound,
-    InvalidDbtCommand,
-)
+from ..exceptions import ManifestNotFound, ManifestDataNotFound, InvalidDbtCommand
 from .tasks import DbtNodeType, Task, TaskList
 
 
@@ -44,7 +40,7 @@ class TaskLoader:
         self.data = self.load_manifest()
         self.test_deps = self.load_test_dependencies()
 
-    def load_test_dependencies(self) -> Set:
+    def load_test_dependencies(self) -> Set[str]:
         """
         Loads all the dependencies found in test nodes within manifest file.
         This set of dependencies is then used to determine whether a test task should be created
