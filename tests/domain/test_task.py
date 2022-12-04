@@ -113,3 +113,62 @@ def test_get_node_type():
 def test_get_dbt_command(node_name, expected):
     actual = Task.get_dbt_command(node_name)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    'node_details, idx, expected', [
+        pytest.param(
+            {'name': 'my_model', 'fqn': ['my_profile', 'marts', 'finance', 'my_model']},
+            -2,
+            'finance',
+            id='extract from the last but one index'
+        ),
+        pytest.param(
+            {'name': 'my_model', 'fqn': ['my_profile', 'marts', 'finance', 'my_model']},
+            1,
+            'marts',
+            id='extract from the first index'
+        ),
+    ]
+)
+def test_get_task_group(node_details, idx, expected):
+    actual = Task.get_task_group(node_details, idx)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    'node_details, expected', [
+        pytest.param(
+            {
+                'name': 'my_model',
+                'depends_on': {
+                    'macros': [],
+                    'nodes': [
+                        'model.my_profile.second_model',
+                        'model.my_profile.third_model',
+                        'macro.dbt.get_where_subquery',
+                    ]
+                }
+            },
+            {'run_second_model', 'run_third_model'},
+        ),
+        pytest.param(
+            {
+                'name': 'my_model',
+                'depends_on': {
+                    'macros': [],
+                    'nodes': [
+                        'model.my_profile.second_model',
+                        'model.my_profile.third_model',
+                        'seed.my_profile.customers_csv',
+                        'macro.dbt.get_where_subquery',
+                    ]
+                }
+            },
+            {'run_second_model', 'run_third_model', 'seed_customers_csv'},
+        ),
+    ]
+)
+def test_get_upstream_dependencies(node_details, expected):
+    actual = Task.get_upstream_dependencies(node_details)
+    assert actual == expected
