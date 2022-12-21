@@ -1,9 +1,9 @@
 import pytest
 
-from dbt_airflow.domain.tasks import Task
+from dbt_airflow.domain.tasks import Task, TaskList
 
 
-def test_task_init_constructs_correct_task_name(mock_run_task):
+def test_task_init_constructs_correcxt_task_name(mock_run_task):
     expected_task_name = 'run_my_model'
     assert mock_run_task.name == expected_task_name
 
@@ -171,4 +171,34 @@ def test_get_task_group(node_details, idx, expected):
 )
 def test_get_upstream_dependencies(node_details, expected):
     actual = Task.get_upstream_dependencies(node_details)
+    assert actual == expected
+
+
+def test_task_list_find_task_by_name(mock_task_list):
+    expected_task = Task(
+        model_name='my_model',
+        dbt_node_name='',
+        dbt_command='test',
+        upstream_tasks={'run_my_model'},
+        task_group='my_task_group',
+    )
+    actual = mock_task_list.find_task_by_name('test_my_model')
+
+    assert actual == expected_task
+
+
+def test_task_list_find_task_by_name_raises(mock_task_list):
+    with pytest.raises(ValueError):
+        _ = mock_task_list.find_task_by_name('task_does_not_exist')
+
+
+def test_task_list_get_statistics(mock_task_list):
+    expected = {
+        'models': 1,
+        'tests': 1,
+        'snapshots': 1,
+        'seeds': 1,
+    }
+    actual = mock_task_list.get_statistics()
+
     assert actual == expected
