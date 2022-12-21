@@ -154,10 +154,14 @@ class TaskList(List):
     """
     A collection of dbt-airflow tasks
     """
-    # TODO: Prevent adding tasks of the same name i.e. which are __eq__(ual)
-    # def append(self, __object: _T) -> None:
-    #     if __object in self:
-    #         raise ValueError('test')
+    def append(self, item) -> None:
+        if not isinstance(item, Task):
+            raise ValueError(f'Element of type {type(item)} cannot be added in TaskList.')
+
+        if item.name in [t.name for t in self]:
+            raise ValueError(f'A task with name {item.name} already exists')
+
+        super(TaskList, self).append(item)
 
     def find_task_by_name(self, name: str) -> Task:
         """

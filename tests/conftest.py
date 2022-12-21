@@ -28,7 +28,7 @@ def mock_test_task():
 
 
 @pytest.fixture
-def mock_task_list():
+def mock_task_list(mock_test_task, mock_run_task):
     return TaskList([
         Task(
             model_name='my_model',

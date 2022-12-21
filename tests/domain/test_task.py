@@ -202,3 +202,23 @@ def test_task_list_get_statistics(mock_task_list):
     actual = mock_task_list.get_statistics()
 
     assert actual == expected
+
+
+def test_task_list_appends_new_tasks_successfully(mock_run_task, mock_test_task):
+    task_list = TaskList()
+    task_list.append(mock_run_task)
+    task_list.append(mock_test_task)
+
+    assert len(task_list) == 2
+
+
+def test_task_list_raises_error_when_non_task_object_is_added(mock_task_list):
+    expected_err = "Element of type <class 'str'> cannot be added in TaskList."
+    with pytest.raises(ValueError, match=expected_err):
+        mock_task_list.append('hello')
+
+
+def test_task_list_raises_error_on_duplicated_task_names(mock_task_list, mock_run_task):
+    expected_err = 'A task with name run_my_model already exists'
+    with pytest.raises(ValueError, match=expected_err):
+        mock_task_list.append(mock_run_task)
