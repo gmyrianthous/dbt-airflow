@@ -1,18 +1,7 @@
 import json
-from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set
 
-from dbt_airflow.exceptions import TaskGroupExtractionError
-
-
-class DbtNodeType(Enum):
-    """
-    Each dbt node could be of one of the specified types within this Enum class.
-    """
-    MODEL = 'model'
-    TEST = 'test'
-    SNAPSHOT = 'snapshot'
-    SEED = 'seed'
+from .model import DbtResourceType, Node
 
 
 class Task:
@@ -21,7 +10,7 @@ class Task:
     dbt-airflow (not to be confused with Airflow Tasks).
 
     This is an internal convention that is used to represent a single task
-    that is extracted from manifest.json file.
+    that is extracted from test_manifest.json file.
     """
 
     def __init__(
@@ -32,6 +21,14 @@ class Task:
         upstream_tasks: Set[str],
         task_group: Optional[str],
     ):
+        """
+        :param model_name: This is the cleaned model name
+        :param dbt_node_name: This is the dbt node name, also containing node resource type and
+            profile in the form `<resource-type>.<dbt-profile>.<model-name>
+        :param dbt_command: The dbt command (one of `run`, `test`, `snapshot`, `seed`)
+        :param upstream_tasks: A list containing the upstream tasks
+        :param task_group: The task group of the task (if enabled)
+        """
         self.model_name = model_name
         self.dbt_command = dbt_command
         self.dbt_node_name = dbt_node_name
@@ -59,25 +56,16 @@ class Task:
         }
 
     @classmethod
-    def create_task_from_manifest_node(
-        cls,
-        node_name: str,
-        node_details: Dict[str, Any],
-        create_task_group: bool,
-        task_group_folder_depth: int = -2,
-    ):
+    def create_task_from_manifest_node(cls, node_name: str, node: Node):
         """
-        Given a dbt node as specified in manifest.json file, construct a Task instance
+        Given a dbt node as specified in test_manifest.json file, construct a Task instance
         """
         return Task(
-            model_name=cls.get_model_name(node_name),
+            model_name=node.name,
             dbt_node_name=node_name,
             dbt_command=cls.get_dbt_command(node_name),
-            upstream_tasks=cls.get_upstream_dependencies(node_details),
-            task_group=(
-               cls.get_task_group(node_details, task_group_folder_depth)
-               if create_task_group else None
-            ),
+            upstream_tasks=cls.get_upstream_dependencies(node),
+            task_group=node.task_group
         )
 
     @staticmethod
@@ -115,37 +103,20 @@ class Task:
         snapshot -> snapshot
         """
         node_type = Task.get_node_type(node_name)
-        if node_type == DbtNodeType.MODEL.value:
+        if node_type == DbtResourceType.model:
             return 'run'
         return node_type
 
     @staticmethod
-    def get_task_group(node_details: Dict[str, Any], idx: int = -2) -> str:
+    def get_upstream_dependencies(node: Node) -> Set[str]:
         """
-        The task group logic is based on the structure of a dbt project. This structure is
-        specified in the `fqn` key that each of the nodes has in manifest.json file.
-        """
-        try:
-            # Eliminate duplicates but persist order
-            return list(dict.fromkeys(node_details['fqn']))[idx]
-        except IndexError:
-            raise TaskGroupExtractionError(
-                f"Task Group cannot be extracted from fqn "
-                f"{node_details['fqn']} with index index {idx}."
-            )
-
-    @staticmethod
-    def get_upstream_dependencies(node_details: Dict[str, Any]) -> Set[str]:
-        """
-        Extracts upstream dependencies from the input `node_details`.
+        Extracts upstream dependencies
         """
         return {
             Task.create_task_name_from_node_name(node_name)
-            for node_name in node_details['depends_on']['nodes']
-            if Task.get_node_type(node_name) in [
-                DbtNodeType.MODEL.value,
-                DbtNodeType.SEED.value,
-                DbtNodeType.SNAPSHOT.value,
+            for node_name in node.depends_on.nodes
+            if node.resource_type in [
+                DbtResourceType.model, DbtResourceType.seed, DbtResourceType.snapshot
             ]
         }
 

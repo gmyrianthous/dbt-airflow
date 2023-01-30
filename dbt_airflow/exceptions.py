@@ -3,7 +3,7 @@ class DbtAirflowException(Exception):
 
 
 class ManifestNotFound(DbtAirflowException):
-    """Raised when manifest.json file is not found under the expected path"""
+    """Raised when test_manifest.json file is not found under the expected path"""
     pass
 
 
@@ -24,9 +24,4 @@ class InvalidDbtCommand(DbtAirflowException):
 
 class DuplicateTaskName(DbtAirflowException):
     """Raised when a duplicate task is identified within a TaskList"""
-    pass
-
-
-class TaskGroupExtractionError(DbtAirflowException):
-    """Raised when a Task Group cannot be extracted using the input index provided"""
     pass
