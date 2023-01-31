@@ -49,7 +49,9 @@ class Node(BaseModel):
 
     @validator('task_group', always=True)
     def create_task_group(cls, v, values) -> str:
-        return values['fqn'][-2]
+        if len(values['fqn']) >= 2:
+            return values['fqn'][-2]
+        return values['fqn'][0]
 
 
 class Manifest(BaseModel):
@@ -63,6 +65,9 @@ class Manifest(BaseModel):
         }
 
     def get_statistics(self):
+        """
+        Returns a dictionary containing some statistics of the input manifest data.
+        """
         node_types = [n.resource_type for n in self.nodes.values()]
         return {
             'models': node_types.count(DbtResourceType.model),
@@ -131,11 +136,25 @@ class DbtAirflowTask(AirflowTask):
         )
 
     def get_dbt_command(self) -> DbtCommand:
+        """
+        Returns the corresponding dbt command based on the dbt resource type
+            model -> run
+            seed -> seed
+            test -> test
+            snapshot -> snapshot
+        """
         if self.resource_type == DbtResourceType.model:
             return DbtCommand.run
         return DbtCommand(self.resource_type)
 
     def get_model_name(self) -> str:
+        """
+        Extracts the model name from the manifest node name (in the form
+        `<resource-type>.<package-name>.<model-name>`) of the dbt resource.
+        The test tasks get created by dbt-airflow and they all have an empty string as
+        `manifest_node_name`. Therefore, the model name is extracted by the upstream dependencies
+        of the test task, that always contains a single model/seed/snapshot task.
+        """
         if self.resource_type != DbtResourceType.test:
             return self.manifest_node_name.split('.')[-1]
         return list(self.upstream_task_ids)[0].split('.')[-1]
@@ -147,6 +166,10 @@ class TaskList(list):
     """
 
     def append(self, item) -> None:
+        """
+        Appends a new task into the `TaskList` assuming that every element is of type `AirflowTask`
+        and no other task with the same `item.task_id` already exists in the TaskList.
+        """
         if not isinstance(item, AirflowTask):
             raise ValueError(f'Element of type {type(item)} cannot be added in TaskList.')
 
@@ -174,6 +197,7 @@ class TaskList(list):
             'seeds': resource_types.count(DbtResourceType.seed),
         }
 
+    # TODO: To be deleted
     def write_to_file(self, path: str) -> None:
         """
         Dumps tasks in list as json into the specified path
