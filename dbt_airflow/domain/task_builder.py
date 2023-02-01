@@ -10,7 +10,7 @@ class DbtAirflowTaskBuilder:
 
     def __init__(self, manifest_path: str) -> None:
         self.manifest_path = os.path.abspath(manifest_path)
-        self.manifest = self.load_manifest()
+        self.manifest = self._load_manifest()
         self.nodes_with_tests = set()
         self.task_list = TaskList()
 
@@ -50,7 +50,7 @@ class DbtAirflowTaskBuilder:
             f'Found {len(self.nodes_with_tests)} models, snapshots or seeds with dbt tests.'
         )
 
-    def load_manifest(self) -> Manifest:
+    def _load_manifest(self) -> Manifest:
         """
         Loads the test_manifest.json file created by dbt
         """

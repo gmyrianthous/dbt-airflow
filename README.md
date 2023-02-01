@@ -55,7 +55,7 @@ from dbt_airflow.dag_builder import build_dag_dependencies
 
 with DAG(dag_id='dbt', schedule='@daily'):
     task_loader = TaskLoader(
-        manifest_path='target/manifest.json',
+        manifest_path='target/test_manifest.json',
         create_task_groups=False,
         task_group_folder_depth=-2,
     )

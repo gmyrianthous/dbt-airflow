@@ -1,20 +1,21 @@
 import json
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Set
 
 from pydantic import BaseModel, validator
 
 
+from dbt_airflow.domain.operators import (
+    DbtRunOperator,
+    DbtTestOperator,
+    DbtSeedOperator,
+    DbtSnapshotOperator,
+)
+
+
 class DbtResourceType(str, Enum):
     model = 'model'
-    test = 'test'
-    snapshot = 'snapshot'
-    seed = 'seed'
-
-
-class DbtCommand(str, Enum):
-    run = 'run'
     test = 'test'
     snapshot = 'snapshot'
     seed = 'seed'
@@ -89,19 +90,22 @@ class AirflowTask:
 class TriggerDAGAirflowTask(AirflowTask):
     dag_id: str
 
+    def __init__(self):
+        raise NotImplementedError
+
 
 @dataclass(eq=False)
 class DbtAirflowTask(AirflowTask):
-    dbt_command: DbtCommand = field(init=False)  # The dbt command
+    dbt_operator: Callable = field(init=False)
     manifest_node_name: str  # This is the node name as found on manifest.json file
     model_name: str = field(init=False)
     package_name: str
     resource_type: DbtResourceType
     task_group: Optional[str]
-    upstream_task_ids: set[str]
+    upstream_task_ids: Set[str]
 
     def __post_init__(self):
-        self.dbt_command = self.get_dbt_command()
+        self.dbt_operator = self.get_dbt_operator()
         self.model_name = self.get_model_name()
 
     @classmethod
@@ -135,17 +139,14 @@ class DbtAirflowTask(AirflowTask):
             package_name=parent_node.package_name,
         )
 
-    def get_dbt_command(self) -> DbtCommand:
-        """
-        Returns the corresponding dbt command based on the dbt resource type
-            model -> run
-            seed -> seed
-            test -> test
-            snapshot -> snapshot
-        """
+    def get_dbt_operator(self) -> Callable:
         if self.resource_type == DbtResourceType.model:
-            return DbtCommand.run
-        return DbtCommand(self.resource_type)
+            return DbtRunOperator
+        if self.resource_type == DbtResourceType.test:
+            return DbtTestOperator
+        if self.resource_type == DbtResourceType.seed:
+            return DbtSeedOperator
+        return DbtSnapshotOperator
 
     def get_model_name(self) -> str:
         """
@@ -186,7 +187,7 @@ class TaskList(list):
             if task.task_id == task_id:
                 return task
 
-        raise ValueError(f'{task_id=} was not found.')
+        raise ValueError(f'Task with id `{task_id}` was not found.')
 
     def get_statistics(self) -> Dict[str, int]:
         """
