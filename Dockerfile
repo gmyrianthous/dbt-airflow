@@ -15,6 +15,6 @@ USER airflow
 
 COPY . .
 
-RUN pip install poetry
-
-RUN poetry install
+# We've had issues disabling poetry venv
+# See: https://github.com/python-poetry/poetry/issues/1214
+RUN python -m pip install .

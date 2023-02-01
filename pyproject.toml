@@ -9,7 +9,7 @@ readme = "README.md"
 packages = [{ include = "dbt_airflow" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4"
+python = ">=3.7.2,<4"
 dbt-core = ">=1.2.0"
 apache-airflow = ">=2.0.0,<3"
 pydantic = "^1.10.4"

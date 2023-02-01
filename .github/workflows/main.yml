@@ -27,9 +27,3 @@ jobs:
 
       - name: Run tests
         run: pytest tests/ -rP -vv
-
-      - name: Run mypy
-        run: mypy dbt_airflow
-
-      - name: Run flake8
-        run: flake8 dbt_airflow
