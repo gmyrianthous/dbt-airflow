@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbt-airflow"
-version = "0.0.1"
+version = "0.0.3"
 description = "A Python package that creates fine-grained Airflow tasks for dbt"
 repository = "https://github.com/gmyrianthous/dbt-airflow"
 authors = ["Giorgos Myrianthous <giorgos.myrianthous@gmail.com>"]
