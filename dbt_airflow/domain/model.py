@@ -179,6 +179,9 @@ class TaskList(list):
         super(TaskList, self).append(item)
 
     def find_task_by_id(self, task_id: str) -> AirflowTask:
+        """
+        Returns the task with the matching `task_id`. If no task is found a ValueError is raised
+        """
         for task in self:
             if task.task_id == task_id:
                 return task
