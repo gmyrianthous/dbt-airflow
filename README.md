@@ -66,7 +66,7 @@ with DAG(
         dbt_manifest_path=Path('path/to/dbt/project/target/manifest.json'),
         dbt_target='dev',
         dbt_project_path=Path('path/to/dbt/project'),
-        dbt_profile_path=Path('path/to/dbt/profiles),
+        dbt_profile_path=Path('path/to/dbt/profiles'),
     )
 ```
 
