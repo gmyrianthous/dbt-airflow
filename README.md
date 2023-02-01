@@ -68,7 +68,7 @@ with DAG(
         dbt_project_path=Path('path/to/dbt/project'),
         dbt_profile_path=Path('path/to/dbt/profiles),
     )
----
+```
 
 # Contributing
 If you would like to contribute to `dbt-airflow` project, you will essentially need to follow the steps outlined below:
