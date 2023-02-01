@@ -78,25 +78,19 @@ If you would like to contribute to `dbt-airflow` project, you will essentially n
 4. Create a Pull Request
 
 ##  Setting up your local development environment
-In order to be able to contribute to the project, you need to set up a proper development environment where
-you will be able to install all the dependencies required in order to run and test new functionality or bug fixes. 
 
-To do so, you first need to create and then activate a virtual environment:
+TO BE FINALISED
+
 ```bash
-$ python3 -m venv ~/dbt-airflow-venv
-$ source ~/dbt-airflow-venv/bin/activate
+# Install poetry
+pip install poetry
+
+# Install dependencies in poetry venv
+poetry install 
+
+# Run tests
+poetry run tests -rP -vv
+
+# Run specific test(s)
+poetry run tests -k "test_name_or_prefix" -rP -vv
 ```
-
-Now once you have activated your environment, you'll then need to install `dbt-airflow` in **editable mode**. 
-When this mode is activated, the package will be linked to the specified directory (which should be the directory 
-containing the package under development) such that any changes made in the package will be reflected directly 
-in your local environment. Apart from project dependencies, you also need to install the extra `test` dependencies 
-(these are dependencies  which are used as part of testing, such as `pytest`).
-
-You can do so using the `-e` (or `--editable`) flag when installing the package through `pip`:
-```bash
-python3 -m pip install -e .[test]
-```
-
-The above command will install all the dependencies specified in `install_requires` of setup files as well as the 
-`extras_require.test` dependencies.
