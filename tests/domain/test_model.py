@@ -3,7 +3,6 @@ import pytest
 from dbt_airflow.domain.model import (
     AirflowTask,
     DbtAirflowTask,
-    DbtCommand,
     DbtResourceType,
     Manifest,
     NodeDeps,
@@ -207,7 +206,7 @@ def test_dbt_airflow_task_dataclass_initialisation():
     """
     GIVEN the inputs for a dbt Airflow Task
     WHEN the instance of the dataclass undergoes post initialisation
-    THEN fields not included in the init (dbt_command and model_name) are initialised as expected
+    THEN fields not included in the init (model_name) are initialised as expected
     """
     # GIVEN/WHEN
     task = DbtAirflowTask(
@@ -220,7 +219,6 @@ def test_dbt_airflow_task_dataclass_initialisation():
     )
 
     # THEN
-    assert task.dbt_command == DbtCommand.run
     assert task.model_name == 'my_model'
 
 
@@ -241,7 +239,6 @@ def test_dbt_airflow_task_from_manifest_node(mock_node):
     assert actual.manifest_node_name == manifest_node_name
     assert actual.resource_type == DbtResourceType.model
     assert actual.upstream_task_ids == {'seed.mypackage.my_seed', 'model.mypackage.another_model'}
-    assert actual.dbt_command == DbtCommand.run
     assert actual.model_name == 'my_model'
 
 
@@ -262,35 +259,10 @@ def test_dbt_airflow_task_test_task_from_manifest_node(mock_node):
     assert actual.task_id == 'test.mypackage.my_model'
     assert actual.manifest_node_name == ''
     assert actual.resource_type == DbtResourceType.test
-    assert actual.dbt_command == DbtCommand.test
     assert actual.model_name == 'my_model'
     assert actual.upstream_task_ids == {parent_manifest_name}
     assert actual.task_group == mock_node.task_group
     assert actual.package_name == mock_node.package_name
-
-
-@pytest.mark.parametrize(
-    'resource_type, expected', [
-        pytest.param(DbtResourceType.test, DbtCommand.test, id='Test `test` resource'),
-        pytest.param(DbtResourceType.model, DbtCommand.run, id='Test `model` resource'),
-        pytest.param(DbtResourceType.seed, DbtCommand.seed, id='Test `seed` resource'),
-        pytest.param(DbtResourceType.snapshot, DbtCommand.snapshot, id='Test `snapshot` resource'),
-    ],
-)
-def test_dbt_airflow_task_get_dbt_command(mock_dbt_airflow_task, resource_type, expected):
-    """
-    GIVEN a particular DbtAirflowTask instance
-    WHEN generating the dbt command
-    THEN the correct dbt command is returned based on the resource type of DbtAirflowTask instance
-    """
-    # GIVEN
-    mock_task = mock_dbt_airflow_task(resource_type=resource_type)
-
-    # WHEN
-    actual = mock_task.get_dbt_command()
-
-    # THEN
-    assert actual == expected
 
 
 @pytest.mark.parametrize(
@@ -428,7 +400,7 @@ def test_task_list_find_task_by_id_raises_error_when_task_is_not_found(mock_dbt_
     ])
 
     # THEN
-    with pytest.raises(ValueError, match="task_id='does_not_exist' was not found"):
+    with pytest.raises(ValueError, match="Task with id `does_not_exist` was not found"):
         # WHEN
         task_list.find_task_by_id('does_not_exist')
 
