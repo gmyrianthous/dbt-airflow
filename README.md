@@ -47,27 +47,27 @@ flexibility by providing different approaches for using `dbt-airflow`.
 ### Building an Airflow DAG using `dbt-airflow`
 
 ```python3
+from datetime import datetime
 from pathlib import Path
 
 from airflow import DAG
-from dbt_airflow.task_loader import TaskLoader
-from dbt_airflow.dag_builder import build_dag_dependencies
 
-with DAG(dag_id='dbt', schedule='@daily'):
-    task_loader = TaskLoader(
-        manifest_path='target/test_manifest.json',
-        create_task_groups=False,
-        task_group_folder_depth=-2,
-    )
-    task_list = task_loader.create_tasks()
-    build_dag_dependencies(
-      tasks=task_list,
-      dbt_target='prod',
-      dbt_profile_path=Path('..', 'profiles'),
-      dbt_project_path=Path('..'),
-    )
-```
+from dbt_airflow.dag_builder import build_dag
 
+
+with DAG(
+    dag_id='test_dag',
+    start_date=datetime(2021, 1, 1),
+    catchup=False,
+    tags=['example'],
+) as dag:
+
+    build_dag(
+        dbt_manifest_path=Path('path/to/dbt/project/target/manifest.json'),
+        dbt_target='dev',
+        dbt_project_path=Path('path/to/dbt/project'),
+        dbt_profile_path=Path('path/to/dbt/profiles),
+    )
 ---
 
 # Contributing
