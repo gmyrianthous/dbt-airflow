@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: stg_payment
+    description: "Staging model consisting of payment events"
+    columns:
+      - name: payment_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null

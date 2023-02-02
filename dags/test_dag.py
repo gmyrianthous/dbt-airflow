@@ -14,8 +14,8 @@ with DAG(
 ) as dag:
 
     build_dag(
-        dbt_manifest_path=Path('example_targets/large/target/manifest.json'),
+        dbt_manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
         dbt_target='dev',
-        dbt_project_path=Path('some/path'),
-        dbt_profile_path=Path('some/path/profiles'),
+        dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
+        dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
     )

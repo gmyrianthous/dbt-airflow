@@ -13,8 +13,13 @@ RUN sudo apt-get update \
 
 USER airflow
 
-COPY . .
+COPY --chown=airflow . .
 
 # We've had issues disabling poetry venv
 # See: https://github.com/python-poetry/poetry/issues/1214
 RUN python -m pip install .
+
+# Setup dbt for the example project
+RUN pip install dbt-postgres==1.3.1
+
+RUN dbt deps --project-dir /opt/airflow/example_dbt_project

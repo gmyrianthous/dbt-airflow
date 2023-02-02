@@ -1,0 +1,12 @@
+test_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres-sakila
+      user: postgres
+      password: postgres
+      port: 5433
+      dbname: postgres
+      schema: public
+      threads: 1

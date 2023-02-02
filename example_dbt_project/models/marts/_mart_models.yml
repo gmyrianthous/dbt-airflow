@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: cumulative_revenue
+    description: "Cumulative revenue from sales"
