@@ -1,18 +1,44 @@
 import json
 import logging
 import os
+from typing import List, Optional
 
 from ..exceptions import ManifestNotFound, ManifestDataNotFound
-from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList
+from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList, ExtraAirflowTask
 
 
 class DbtAirflowTaskBuilder:
 
-    def __init__(self, manifest_path: str) -> None:
+    def __init__(
+        self,
+        manifest_path: str,
+        extra_tasks: Optional[List[ExtraAirflowTask]] = None,
+    ) -> None:
         self.manifest_path = os.path.abspath(manifest_path)
         self.manifest = self._load_manifest()
         self.nodes_with_tests = set()
         self.task_list = TaskList()
+
+        if extra_tasks is None:
+            self.extra_tasks = []
+        else:
+            self.extra_tasks = extra_tasks
+
+    def _add_extra_tasks(self) -> None:
+        """
+
+        """
+        if not self.extra_tasks:
+            logging.info('No extra tasks were provided. Skipping..')
+            return
+
+        for task in self.extra_tasks:
+            self.task_list.append(task)
+
+            # if extra task has no downstream dependencies we don't need to do anything
+            if len(task.downstream_task_ids) == 0:
+                continue
+
 
     def _create_task(self, manifest_node_name: str, node: Node) -> None:
         """
@@ -120,8 +146,11 @@ class DbtAirflowTaskBuilder:
         # Step 2: Create tasks with tests
         self._create_tasks_with_tests()
 
-        # Step 3: Update dependencies
+        # Step 3: Update dependencies between models and tests created
         self._update_dependencies()
+
+        # Step 4: Add extra tasks
+        self._add_extra_tasks()
 
         logging.info(f'Created a TaskList of: {self.task_list.get_statistics()}')
         logging.warning(

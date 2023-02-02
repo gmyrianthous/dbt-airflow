@@ -2,8 +2,11 @@ from datetime import datetime
 from pathlib import Path
 
 from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.dummy import DummyOperator
 
-from dbt_airflow.dag_builder import build_dag
+from dbt_airflow.dag_builder import build_dag, DbtTaskGroup
+from dbt_airflow.domain.model import ExtraAirflowTask
 
 
 with DAG(
@@ -13,9 +16,27 @@ with DAG(
     tags=['example'],
 ) as dag:
 
-    build_dag(
+    extra_tasks = [
+        ExtraAirflowTask(
+            task_id='test_task',
+            operator=PythonOperator,
+            operator_args={
+                'python_callable': lambda: print('Hello world'),
+            },
+        )
+    ]
+
+    t1 = DummyOperator(task_id='dummy_1')
+    t2 = DummyOperator(task_id='dummy_2')
+
+    tg = DbtTaskGroup(
+        group_id='dbt-company',
         dbt_manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
         dbt_target='dev',
         dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
+        extra_tasks=extra_tasks,
+        create_task_groups=True,
     )
+
+    t1 >> tg >> t2
