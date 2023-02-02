@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
-from dbt_airflow.dag_builder import build_dag, DbtTaskGroup
+from dbt_airflow.dag_builder import DbtTaskGroup
 from dbt_airflow.domain.model import ExtraAirflowTask
 
 
