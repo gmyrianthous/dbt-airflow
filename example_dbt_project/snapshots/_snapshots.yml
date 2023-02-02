@@ -1,0 +1,8 @@
+version: 2
+
+snapshots:
+  - name: int_customers_per_store_snapshot
+    columns:
+      - name: total_customers
+        tests:
+          - not_null

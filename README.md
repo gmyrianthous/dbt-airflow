@@ -80,6 +80,16 @@ If you would like to contribute to `dbt-airflow` project, you will essentially n
 ##  Setting up your local development environment
 
 TO BE FINALISED
+```bash
+docker-compose build
+
+docker-compose up
+
+# Access postgres db (changed to port 5433 given that we have an additional postgres instance for Airflow itsefl)
+docker ps  # get the container id of postgres-sakila
+docker exec -it <container-id> /bin/bash
+psql -U postgres -p 5433 
+```
 
 ```bash
 # Install poetry

@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: int_revenue_by_date
+  - name: int_customers_per_store
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+      - name: total_customers
+        tests:
+          - not_null

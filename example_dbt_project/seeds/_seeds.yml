@@ -1,0 +1,12 @@
+version: 2
+
+seeds:
+  - name: customer_base
+    description: Customer base stored as csv file
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+      - name: store_id
+        tests:
+          - not_null
