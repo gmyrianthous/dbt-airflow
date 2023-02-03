@@ -426,5 +426,5 @@ def test_task_list_get_statistics_reports_correct_counts_per_task_resource_type(
     actual = task_list.get_statistics()
 
     # THEN
-    expected = {'models': 2, 'tests': 1, 'snapshots': 1, 'seeds': 1}
+    expected = {'models': 2, 'tests': 1, 'snapshots': 1, 'seeds': 1, 'extra_tasks': 0}
     assert actual == expected

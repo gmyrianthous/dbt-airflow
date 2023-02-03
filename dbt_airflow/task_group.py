@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from airflow.utils.task_group import TaskGroup
 
-from dbt_airflow.domain.model import ExtraAirflowTask, DbtAirflowTask
+from dbt_airflow.domain.model import ExtraTask, DbtAirflowTask
 from dbt_airflow.domain.task_builder import DbtAirflowTaskBuilder
 
 
@@ -16,7 +16,7 @@ class DbtTaskGroup(TaskGroup):
         dbt_profile_path: Path,
         dbt_project_path: Path,
         create_sub_task_groups: Optional[bool] = True,
-        extra_tasks: Optional[List[ExtraAirflowTask]] = None,
+        extra_tasks: Optional[List[ExtraTask]] = None,
         *args,
         **kwargs
     ):
@@ -64,7 +64,7 @@ class DbtTaskGroup(TaskGroup):
         }
         airflow_tasks.update({
             task.task_id: task.operator(task_id=task.task_id, **task.operator_args)
-            for task in self.tasks if isinstance(task, ExtraAirflowTask)
+            for task in self.tasks if isinstance(task, ExtraTask)
         })
 
         # Handle dependencies

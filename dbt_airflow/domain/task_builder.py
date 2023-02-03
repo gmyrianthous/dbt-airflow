@@ -4,7 +4,7 @@ import os
 from typing import List, Optional
 
 from ..exceptions import ManifestNotFound, ManifestDataNotFound
-from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList, ExtraAirflowTask
+from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList, ExtraTask
 
 
 class DbtAirflowTaskBuilder:
@@ -12,7 +12,7 @@ class DbtAirflowTaskBuilder:
     def __init__(
         self,
         manifest_path: str,
-        extra_tasks: Optional[List[ExtraAirflowTask]] = None,
+        extra_tasks: Optional[List[ExtraTask]] = None,
     ) -> None:
         self.manifest_path = os.path.abspath(manifest_path)
         self.manifest = self._load_manifest()

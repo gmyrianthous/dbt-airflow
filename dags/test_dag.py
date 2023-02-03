@@ -6,7 +6,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
 from dbt_airflow.task_group import DbtTaskGroup
-from dbt_airflow.domain.model import ExtraAirflowTask
+from dbt_airflow.domain.model import ExtraTask
 
 
 with DAG(
@@ -17,7 +17,7 @@ with DAG(
 ) as dag:
 
     extra_tasks = [
-        ExtraAirflowTask(
+        ExtraTask(
             task_id='test_task',
             operator=PythonOperator,
             operator_args={
@@ -28,7 +28,7 @@ with DAG(
                 'model.example_dbt_project.int_revenue_by_date'
             }
         ),
-        ExtraAirflowTask(
+        ExtraTask(
             task_id='another_test_task',
             operator=PythonOperator,
             operator_args={
@@ -41,7 +41,7 @@ with DAG(
                 'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot',
             }
         ),
-        ExtraAirflowTask(
+        ExtraTask(
             task_id='test_task_3',
             operator=PythonOperator,
             operator_args={
@@ -66,7 +66,7 @@ with DAG(
         dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
         extra_tasks=extra_tasks,
-        create_sub_task_groups=True,
+        create_sub_task_groups=False,
     )
 
     t1 >> tg >> t2
