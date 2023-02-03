@@ -1,5 +1,4 @@
-import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Set
 
@@ -215,20 +214,3 @@ class TaskList(list):
             'seeds': resource_types.count(DbtResourceType.seed),
             'extra_tasks': sum(isinstance(task, ExtraAirflowTask) for task in self)
         }
-
-#     # TODO: To be deleted
-#     def write_to_file(self, path: str) -> None:
-#         """
-#         Dumps tasks in list as json into the specified path
-#         """
-#         # os.makedirs(os.path.dirname(path), exist_ok=True)
-#         with open(path, 'w') as f:
-#             tasks_dict = [asdict(task) for task in self]
-#             json.dump(tasks_dict, f, indent=4, cls=AirflowDbtTaskJSONEncoder)
-#
-#
-# class AirflowDbtTaskJSONEncoder(json.JSONEncoder):
-#     def default(self, o):
-#         if isinstance(o, set):
-#             return list(o)
-#         return super().default(o)
