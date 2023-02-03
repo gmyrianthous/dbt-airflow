@@ -95,6 +95,18 @@ class ExtraAirflowTask(AirflowTask):
     downstream_task_ids: Optional[Set[str]] = field(default_factory=set)
     task_group: Optional[str] = None
 
+    # @validator('upstream_task_ids', always=True)
+    # def validate_upstream_task_ids(cls, v, values) -> Set:
+    #     if values['upstream_task_ids']:
+    #         return set()
+    #     return values['upstream_task_ids']
+    #
+    # @validator('downstream_task_ids', always=True)
+    # def validate_downstream_task_ids(cls, v, values) -> Set:
+    #     if values['downstream_task_ids'] is None:
+    #         return set()
+    #     return values['downstream_task_ids']
+
 
 @dataclass(eq=False)
 class DbtAirflowTask(AirflowTask):

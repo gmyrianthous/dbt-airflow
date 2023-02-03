@@ -35,10 +35,19 @@ class DbtAirflowTaskBuilder:
         for task in self.extra_tasks:
             self.task_list.append(task)
 
-            # if extra task has no downstream dependencies we don't need to do anything
-            if len(task.downstream_task_ids) == 0:
-                continue
+            # Iterate through extra task downstream dependencies
+            for downstream_task_id in task.downstream_task_ids:
+                downstream_task = self.task_list.find_task_by_id(downstream_task_id)
 
+                # We want to check if the downstream task of extra task, is defined as
+                # upstream dependency
+                for upstream_task_id in task.upstream_task_ids:
+                    upstream_task = self.task_list.find_task_by_id(upstream_task_id)
+                    if upstream_task.task_id in downstream_task.upstream_task_ids:
+                        downstream_task.upstream_task_ids.remove(upstream_task_id)
+
+                #
+                downstream_task.upstream_task_ids.add(task.task_id)
 
     def _create_task(self, manifest_node_name: str, node: Node) -> None:
         """

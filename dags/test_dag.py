@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
-from dbt_airflow.dag_builder import DbtTaskGroup
+from dbt_airflow.task_group import DbtTaskGroup
 from dbt_airflow.domain.model import ExtraAirflowTask
 
 
@@ -23,6 +23,36 @@ with DAG(
             operator_args={
                 'python_callable': lambda: print('Hello world'),
             },
+            upstream_task_ids={
+                'model.example_dbt_project.int_customers_per_store',
+                'model.example_dbt_project.int_revenue_by_date'
+            }
+        ),
+        ExtraAirflowTask(
+            task_id='another_test_task',
+            operator=PythonOperator,
+            operator_args={
+                'python_callable': lambda: print('Hello world 2!'),
+            },
+            upstream_task_ids={
+                'test.example_dbt_project.int_customers_per_store',
+            },
+            downstream_task_ids={
+                'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot',
+            }
+        ),
+        ExtraAirflowTask(
+            task_id='test_task_3',
+            operator=PythonOperator,
+            operator_args={
+                'python_callable': lambda: print('Hello world 3!'),
+            },
+            downstream_task_ids={
+                'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot',
+            },
+            upstream_task_ids={
+                'model.example_dbt_project.int_revenue_by_date',
+            },
         )
     ]
 
@@ -36,7 +66,7 @@ with DAG(
         dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
         extra_tasks=extra_tasks,
-        create_task_groups=True,
+        create_sub_task_groups=True,
     )
 
     t1 >> tg >> t2
