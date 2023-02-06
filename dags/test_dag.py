@@ -61,12 +61,12 @@ with DAG(
 
     tg = DbtTaskGroup(
         group_id='dbt-company',
-        dbt_manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
+        dbt_manifest_path=Path('/opt/airflow/example/large/target/manifest.json'),
         dbt_target='dev',
         dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
         extra_tasks=extra_tasks,
-        create_sub_task_groups=False,
+        create_sub_task_groups=True,
     )
 
     t1 >> tg >> t2
