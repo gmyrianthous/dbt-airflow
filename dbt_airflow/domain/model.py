@@ -50,8 +50,12 @@ class Node(BaseModel):
 
     @validator('task_group', always=True)
     def create_task_group(cls, v, values) -> str:
-        if len(values['fqn']) >= 2:
-            return values['fqn'][-2]
+        tg_idx = -2
+        if values['resource_type'] == DbtResourceType.snapshot:
+            tg_idx = -3
+
+        if len(values['fqn']) >= abs(tg_idx):
+            return values['fqn'][tg_idx]
         return values['fqn'][0]
 
 
