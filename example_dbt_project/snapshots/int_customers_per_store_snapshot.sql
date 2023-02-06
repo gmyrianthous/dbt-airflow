@@ -1,4 +1,4 @@
-{% snapshot int_stock_balances_daily_grouped_by_day_snapshot %}
+{% snapshot int_customers_per_store_snapshot %}
 
     {{
         config(

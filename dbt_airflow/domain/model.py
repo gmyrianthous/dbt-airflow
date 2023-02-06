@@ -1,8 +1,8 @@
-import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Set
 
+from airflow.models.baseoperator import BaseOperator
 from pydantic import BaseModel, validator
 
 
@@ -50,8 +50,12 @@ class Node(BaseModel):
 
     @validator('task_group', always=True)
     def create_task_group(cls, v, values) -> str:
-        if len(values['fqn']) >= 2:
-            return values['fqn'][-2]
+        tg_idx = -2
+        if values['resource_type'] == DbtResourceType.snapshot:
+            tg_idx = -3
+
+        if len(values['fqn']) >= abs(tg_idx):
+            return values['fqn'][tg_idx]
         return values['fqn'][0]
 
 
@@ -87,11 +91,12 @@ class AirflowTask:
 
 
 @dataclass(eq=False)
-class TriggerDAGAirflowTask(AirflowTask):
-    dag_id: str
-
-    def __init__(self):
-        raise NotImplementedError
+class ExtraTask(AirflowTask):
+    operator: BaseOperator
+    operator_args: field(default_factory=dict)
+    upstream_task_ids: Optional[Set[str]] = field(default_factory=set)
+    downstream_task_ids: Optional[Set[str]] = field(default_factory=set)
+    task_group: Optional[str] = None
 
 
 @dataclass(eq=False)
@@ -193,27 +198,11 @@ class TaskList(list):
         """
         Returns counts per node type in the resulting TaskList
         """
-        resource_types = [task.resource_type for task in self]
+        resource_types = [task.resource_type for task in self if isinstance(task, DbtAirflowTask)]
         return {
             'models': resource_types.count(DbtResourceType.model),
             'tests': resource_types.count(DbtResourceType.test),
             'snapshots': resource_types.count(DbtResourceType.snapshot),
             'seeds': resource_types.count(DbtResourceType.seed),
+            'extra_tasks': sum(isinstance(task, ExtraTask) for task in self)
         }
-
-    # TODO: To be deleted
-    def write_to_file(self, path: str) -> None:
-        """
-        Dumps tasks in list as json into the specified path
-        """
-        # os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, 'w') as f:
-            tasks_dict = [asdict(task) for task in self]
-            json.dump(tasks_dict, f, indent=4, cls=AirflowDbtTaskJSONEncoder)
-
-
-class AirflowDbtTaskJSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, set):
-            return list(o)
-        return super().default(o)
