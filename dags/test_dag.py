@@ -38,7 +38,7 @@ with DAG(
                 'test.example_dbt_project.int_customers_per_store',
             },
             downstream_task_ids={
-                'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot',
+                'snapshot.example_dbt_project.int_customers_per_store_snapshot',
             }
         ),
         ExtraTask(
@@ -48,7 +48,7 @@ with DAG(
                 'python_callable': lambda: print('Hello world 3!'),
             },
             downstream_task_ids={
-                'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot',
+                'snapshot.example_dbt_project.int_customers_per_store_snapshot',
             },
             upstream_task_ids={
                 'model.example_dbt_project.int_revenue_by_date',

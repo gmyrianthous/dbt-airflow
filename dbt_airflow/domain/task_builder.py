@@ -4,7 +4,8 @@ import os
 from typing import List, Optional
 
 from ..exceptions import ManifestNotFound, ManifestDataNotFound
-from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList, ExtraTask
+from .model import DbtResourceType, DbtAirflowTask, TaskList, ExtraTask
+from dbt_airflow.parser.dbt import Manifest, Node
 
 
 class DbtAirflowTaskBuilder:
