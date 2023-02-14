@@ -36,7 +36,7 @@ class Node(BaseModel):
     fqn: Optional[List[str]]
     package_name: str
     name: str
-    task_group: str = None
+    task_group: Optional[str] = None
 
     @validator('task_group', always=True)
     def create_task_group(cls, v, values) -> str:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Optional, Set
+from typing import Any, Callable, Dict, Optional, Set
 
 from airflow.models.baseoperator import BaseOperator
 
@@ -25,9 +25,9 @@ class AirflowTask:
 @dataclass(eq=False)
 class ExtraTask(AirflowTask):
     operator: BaseOperator
-    operator_args: field(default_factory=dict)
-    upstream_task_ids: Optional[Set[str]] = field(default_factory=set)
-    downstream_task_ids: Optional[Set[str]] = field(default_factory=set)
+    operator_args: Dict[Any, Any] = field(default_factory=dict)
+    upstream_task_ids: Set[str] = field(default_factory=set)
+    downstream_task_ids: Set[str] = field(default_factory=set)
     task_group: Optional[str] = None
 
 

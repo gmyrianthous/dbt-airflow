@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from airflow.operators.bash import BashOperator
 from airflow.utils.decorators import apply_defaults
@@ -13,7 +13,7 @@ class DbtOperator(BashOperator):
         dbt_profile_path: Path,
         dbt_project_path: Path,
         resource_name: str,
-        dbt_command: str = None,
+        dbt_command: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self.dbt_target_profile = dbt_target_profile
