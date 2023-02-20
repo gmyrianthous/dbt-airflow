@@ -1,6 +1,6 @@
 import pytest
 
-from dbt_airflow.domain.model import DbtAirflowTask
+from dbt_airflow.core.task import DbtAirflowTask
 from dbt_airflow.parser.dbt import DbtResourceType, Manifest
 
 
