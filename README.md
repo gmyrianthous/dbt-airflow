@@ -63,8 +63,8 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
-from dbt_airflow.task_group import DbtTaskGroup
-from dbt_airflow.domain.model import ExtraTask
+from dbt_airflow.core.task_group import DbtTaskGroup
+from dbt_airflow.core.task import ExtraTask
 
 
 with DAG(
@@ -92,9 +92,26 @@ with DAG(
             operator_args={
                 'python_callable': lambda: print('Hello world 2!'),
             },
-            upstream_task_ids={'test.example_dbt_project.int_customers_per_store'},
-            downstream_task_ids={'snapshot.example_dbt_project.int_stock_balances_daily_grouped_by_day_snapshot'}
+            upstream_task_ids={
+                'test.example_dbt_project.int_customers_per_store',
+            },
+            downstream_task_ids={
+                'snapshot.example_dbt_project.int_customers_per_store_snapshot',
+            }
         ),
+        ExtraTask(
+            task_id='test_task_3',
+            operator=PythonOperator,
+            operator_args={
+                'python_callable': lambda: print('Hello world 3!'),
+            },
+            downstream_task_ids={
+                'snapshot.example_dbt_project.int_customers_per_store_snapshot',
+            },
+            upstream_task_ids={
+                'model.example_dbt_project.int_revenue_by_date',
+            },
+        )
     ]
 
     t1 = DummyOperator(task_id='dummy_1')

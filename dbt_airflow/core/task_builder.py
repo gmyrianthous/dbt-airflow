@@ -4,10 +4,15 @@ import os
 from typing import List, Optional
 
 from ..exceptions import ManifestNotFound, ManifestDataNotFound
-from .model import DbtResourceType, Manifest, Node, DbtAirflowTask, TaskList, ExtraTask
+from dbt_airflow.core.task import DbtAirflowTask, ExtraTask
+from dbt_airflow.core.task_list import TaskList
+from dbt_airflow.parser.dbt import DbtResourceType, Manifest, Node
 
 
 class DbtAirflowTaskBuilder:
+    """
+    TODO
+    """
 
     def __init__(
         self,

@@ -3,8 +3,8 @@ from typing import Dict, List, Optional
 
 from airflow.utils.task_group import TaskGroup
 
-from dbt_airflow.domain.model import ExtraTask, DbtAirflowTask
-from dbt_airflow.domain.task_builder import DbtAirflowTaskBuilder
+from dbt_airflow.core.task import ExtraTask, DbtAirflowTask
+from dbt_airflow.core.task_builder import DbtAirflowTaskBuilder
 
 
 class DbtTaskGroup(TaskGroup):
