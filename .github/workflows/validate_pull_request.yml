@@ -23,7 +23,7 @@ jobs:
         id: setup-python
         uses: actions/setup-python@v4.5.0
         with:
-          python-version: "${{ env.PYTHON_VERSION }}"
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Cache virtual environment and pip
         uses: actions/cache@v3.2.3
         with:
