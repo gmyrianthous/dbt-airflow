@@ -41,7 +41,6 @@ jobs:
       - name: Check out
         uses: actions/checkout@v3.3.0
         with:
-          token: ${{ secrets.PLUM_CI_PHRASE_PULL_PAT }}
           fetch-depth: 0
       - name: Setup Python
         id: setup-python
