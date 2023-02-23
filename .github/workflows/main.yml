@@ -61,10 +61,10 @@ jobs:
           poetry install --with dev --no-interaction --no-ansi --sync
       - name: Create new version and changelog
         run: |
-          poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
           git config --local user.name "${{ github.event.pusher.name }}"
           git config --local user.email "${{ github.event.pusher.email }}"
           echo "The name of the pusher: ${{ github.event.pusher.name }}"
           echo "The email of the pusher: ${{ github.event.pusher.email }}"
+          poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
           git config --local pull.rebase true
           git push -u origin HEAD:$(git branch --show-current) --tags
