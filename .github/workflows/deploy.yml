@@ -1,9 +1,9 @@
 name: Release on PyPI
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - *
 
 jobs:
   publish:
@@ -19,6 +19,7 @@ jobs:
         with:
           path: |
             ~/.cache/pip
+            .venv
           key: ${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
       - run: pip install poetry
       - run: poetry build

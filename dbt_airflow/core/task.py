@@ -4,8 +4,6 @@ from typing import Any, Callable, Dict, Optional, Set
 from airflow.models.baseoperator import BaseOperator
 
 from dbt_airflow.parser.dbt import DbtResourceType, Node
-
-
 from dbt_airflow.core.operators import (
     DbtRunOperator,
     DbtTestOperator,
