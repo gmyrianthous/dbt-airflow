@@ -1,9 +1,9 @@
 name: Release on PyPI
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - *
 
 jobs:
   publish:
