@@ -19,6 +19,7 @@ jobs:
         with:
           path: |
             ~/.cache/pip
+            .venv
           key: ${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
       - run: pip install poetry
       - run: poetry build
