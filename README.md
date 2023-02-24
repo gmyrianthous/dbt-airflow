@@ -132,11 +132,33 @@ with DAG(
 ```
 
 # Contributing
+This is an open-source project and everyone is welcome in contributing. Before 
+
 If you would like to contribute to `dbt-airflow` project, you will essentially need to follow the steps outlined below:
 1. Create a fork of the repository
 2. Set up the development environment on your local machine (see the detailed guide below)
 3. Write and test your contribution
 4. Create a Pull Request
+
+## Running the tests
+This project uses `poetry` tool for dependency management. You'll have to install `poetry` and install the dependencies
+specified in `pyproject.toml`. If you'd like to run the tests, make sure to do so within the poetry environment, as
+shown below. 
+
+```bash
+# Install poetry
+$ pip install poetry==1.3.0
+
+# Install dependencies in poetry venv
+$ poetry install 
+
+# Run tests
+$ poetry run tests -rP -vv
+
+# Run specific test(s)
+$ poetry run tests -k "test_name_or_prefix" -rP -vv
+```
+
 
 ##  Setting up your local development environment
 
@@ -152,16 +174,4 @@ docker exec -it <container-id> /bin/bash
 psql -U postgres -p 5433 
 ```
 
-```bash
-# Install poetry
-pip install poetry
 
-# Install dependencies in poetry venv
-poetry install 
-
-# Run tests
-poetry run tests -rP -vv
-
-# Run specific test(s)
-poetry run tests -k "test_name_or_prefix" -rP -vv
-```
