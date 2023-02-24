@@ -1,3 +1,11 @@
+## 0.2.7 (2023-02-24)
+
+### Fix
+
+- **ci**: Disable credentials persistance in checkout action (#59)
+- **ci**: Update the way we make releases (#58)
+- **ci**: Add pre-commit hook (#57)
+
 ## 0.2.6 (2023-02-24)
 
 ### Fix
