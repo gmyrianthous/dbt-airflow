@@ -31,8 +31,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
       - name: Install poetry and dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install poetry==${{ env.POETRY_VERSION }}
+          pip install 'poetry~=${{ env.POETRY_VERSION }}'
           poetry config virtualenvs.in-project true
           poetry install --with dev --no-interaction --no-ansi --sync
 
@@ -76,5 +75,5 @@ jobs:
           git checkout -b $branch_name  
           poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
           git config --local pull.rebase true
-          git commit -m "New release on $(date "+%Y-%m-%d")"
           git push -u origin $branch_name --tags
+          gh pr create --body "" --title "New release on $(date "+%Y-%m-%d")"
