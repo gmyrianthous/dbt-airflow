@@ -64,7 +64,7 @@ jobs:
           git config --local user.name "${{ github.event.pusher.name }}"
           git config --local user.email "${{ github.event.pusher.email }}"
           
-          branch_name=new_release(date "+%Y_%m_%d")_${GITHUB_RUN_ID}
+          branch_name=new_release_$(date "+%Y_%m_%d")_${GITHUB_RUN_ID}
           git checkout -b $branch_name
           
           poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
