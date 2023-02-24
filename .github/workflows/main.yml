@@ -22,7 +22,13 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
+      - name: Cache virtual environment and pip
+        uses: actions/cache@v3.2.3
+        with:
+          path: |
+            ~/.cache/pip
+            .venv
+          key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
       - name: Install poetry and dependencies
         run: |
           python3 -m pip install --upgrade pip
