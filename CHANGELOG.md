@@ -1,3 +1,9 @@
+## 0.2.5 (2023-02-24)
+
+### Fix
+
+- **ci**: Fix personal access token in release step (#55)
+
 ## 0.2.4 (2023-02-24)
 
 ### Fix
