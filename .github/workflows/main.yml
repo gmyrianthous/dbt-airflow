@@ -65,15 +65,27 @@ jobs:
           pip install 'poetry~=${{ env.POETRY_VERSION }}'
           poetry config virtualenvs.in-project true
           poetry install --with dev --no-interaction --no-ansi --sync
-      - name: Create PR with new version and changelog
+
+      - name: Create bump and changelog
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.REVISION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --local user.name 'github-actions[bot]'
-          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
-          branch_name=new_release_$(date "+%Y_%m_%d")_${GITHUB_RUN_ID}
-          git checkout -b $branch_name  
-          poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
-          git config --local pull.rebase true
-          git push -u origin $branch_name --tags
-          gh pr create --body "" --title "New release on $(date "+%Y-%m-%d")"
+
+#      - name: Create PR with new version and changelog
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          git config --local user.name 'github-actions[bot]'
+#          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+#          branch_name=new_release_$(date "+%Y_%m_%d")_${GITHUB_RUN_ID}
+#          git checkout -b $branch_name
+#          poetry run cz --no-raise 21 bump --yes --changelog --check-consistency
+#          git config --local pull.rebase true
+#          git push -u origin $branch_name --tags
+#          gh pr create --body "" --title "New release on $(date "+%Y-%m-%d")"
