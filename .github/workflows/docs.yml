@@ -3,7 +3,7 @@ name: Publish Docs
 on:
   push:
     branches:
-      - main
+      - feat/NOISSUE/create-docs
 
 permissions:
   contents: write
