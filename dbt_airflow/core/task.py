@@ -22,6 +22,11 @@ class AirflowTask:
 
 @dataclass(eq=False)
 class ExtraTask(AirflowTask):
+    """
+    This is a dataclass representing an extra task that is supposed to be inserted in a specific
+    place within the populated dbt project, based on the task names specified in
+    `upstream_task_ids` and/or `downstream_task_ids`.
+    """
     operator: BaseOperator
     operator_args: Dict[Any, Any] = field(default_factory=dict)
     upstream_task_ids: Set[str] = field(default_factory=set)
@@ -75,6 +80,10 @@ class DbtAirflowTask(AirflowTask):
         )
 
     def get_dbt_operator(self) -> Callable:
+        """
+        Returns a callable that corresponds to the dbt Airflow Operator based on the instance's
+        resource type.
+        """
         if self.resource_type == DbtResourceType.model:
             return DbtRunOperator
         if self.resource_type == DbtResourceType.test:

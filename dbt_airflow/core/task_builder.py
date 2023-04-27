@@ -11,7 +11,9 @@ from dbt_airflow.parser.dbt import DbtResourceType, Manifest, Node
 
 class DbtAirflowTaskBuilder:
     """
-    TODO
+    This class implements functionality that is used to populate the dbt project as an Airflow DAG,
+    based on the user input. It also handles dbt model and test dependencies as well as any extra
+    tasks specified by user.
     """
 
     def __init__(
@@ -31,7 +33,7 @@ class DbtAirflowTaskBuilder:
 
     def _add_extra_tasks(self) -> None:
         """
-
+        Adds extra tasks specified in DbtTaskGroup
         """
         if not self.extra_tasks:
             logging.info('No extra tasks were provided. Skipping..')
