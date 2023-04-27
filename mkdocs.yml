@@ -1,0 +1,10 @@
+site_name: dbt-airflow Documentation
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - toc.follow
+repo_name: gmryianthous/dbt-airflow"
+repo_url: https://github.com/gmyrianthous/dbt-airflow
