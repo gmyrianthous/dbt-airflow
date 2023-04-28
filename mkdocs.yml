@@ -9,3 +9,14 @@ theme:
 repo_name: gmryianthous/dbt-airflow"
 repo_url: https://github.com/gmyrianthous/dbt-airflow
 
+nav:
+  - Overview: index.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_signature_annotations: true
+            separate_signature: true
