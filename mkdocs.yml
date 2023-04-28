@@ -6,7 +6,7 @@ theme:
     - navigation.sections
     - navigation.expand
     - toc.follow
-repo_name: gmryianthous/dbt-airflow"
+repo_name: gmyrianthous/dbt-airflow"
 repo_url: https://github.com/gmyrianthous/dbt-airflow
 
 nav:
