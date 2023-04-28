@@ -1,7 +1,7 @@
-![deploy](https://github.com/github/docs/actions/workflows/deploy.yml/badge.svg?branch=main)
-![docs](https://github.com/github/docs/actions/workflows/docs.yml/badge.svg?branch=main)
-![main](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main)
-![validate_pull_request](https://github.com/github/docs/actions/workflows/validate_pull_request.yml/badge.svg?branch=main)
+![deploy](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/deploy.yml/badge.svg?branch=main)
+![docs](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/docs.yml/badge.svg?branch=main)
+![main](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/main.yml/badge.svg?branch=main)
+![validate_pull_request](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/validate_pull_request.yml/badge.svg?branch=main)
 
 # dbt-airflow
 A Python package that helps Data and Analytics engineers render dbt projects in Apache Airflow DAGs such that
