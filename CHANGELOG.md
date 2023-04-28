@@ -1,3 +1,9 @@
+## 0.3.0 (2023-04-28)
+
+### Feat
+
+- **docs/cicd**: Automate the deployment of docs (#64)
+
 ## 0.2.0 (2023-02-24)
 
 ### Feat
