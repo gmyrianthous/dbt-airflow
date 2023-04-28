@@ -48,19 +48,6 @@ any other dbt command that creates the `manifest` file) before creating your Air
 package expects that you have already compiled your dbt project so that an up to date manifest file can then be used
 to render the individual tasks.
 
-## Domain Requirements
-
-- Every dbt project, when compiled, will generate a metadata file under `<dbt-project-dir>/target/manifest.json`
-- The manifest file contains information about the interdependencies of the project's data models
-- `dbt-airflow` aims to extract these dependencies such that every dbt entity (snapshot, model, test and seed) has 
-  its own task in a Airflow DAG while entity dependencies are persisted
-- Snapshots are never an upstream dependency of any task
-- The creation of snapshots on seeds does not make sense, and thus not handled
-(not even sure if this is even possible on dbt side)
-- Models may have tests
-- Snapshots may have tests
-- Seeds may have tests
-
 ---
 
 # Installation

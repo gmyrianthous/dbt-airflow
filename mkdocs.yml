@@ -1,0 +1,22 @@
+site_name: dbt-airflow Documentation
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - toc.follow
+repo_name: gmyrianthous/dbt-airflow
+repo_url: https://github.com/gmyrianthous/dbt-airflow
+
+nav:
+  - Overview: index.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_signature_annotations: true
+            separate_signature: true
