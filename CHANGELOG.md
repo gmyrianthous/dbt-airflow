@@ -1,3 +1,9 @@
+## 0.3.1 (2023-04-28)
+
+### Fix
+
+- **cicd**: Fix trigger for docs deployment workflow (#66)
+
 ## 0.3.0 (2023-04-28)
 
 ### Feat

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbt-airflow"
-version = "0.3.0"
+version = "0.3.1"
 description = "A Python package that creates fine-grained Airflow tasks for dbt"
 repository = "https://github.com/gmyrianthous/dbt-airflow"
 authors = ["Giorgos Myrianthous <giorgos.myrianthous@gmail.com>"]
@@ -22,7 +22,7 @@ mkdocstrings-python = "^0.8.2"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.3.0"
+version = "0.3.1"
 version_files = [
     "pyproject.toml:^version"
 ]
