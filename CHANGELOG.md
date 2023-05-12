@@ -1,3 +1,9 @@
+## 0.3.2 (2023-05-12)
+
+### Fix
+
+- **parser**: Add operation in DbtResourceType Enum (#73)
+
 ## 0.3.1 (2023-04-28)
 
 ### Fix
