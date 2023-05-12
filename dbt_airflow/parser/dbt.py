@@ -10,6 +10,10 @@ class DbtResourceType(str, Enum):
     snapshot = 'snapshot'
     seed = 'seed'
 
+    # dbt resource types we are not interested in, but we still need them in order for
+    # dbt-airflow to be able to parse the manifest file
+    operation = 'operation'
+
 
 class NodeDeps(BaseModel):
     nodes: List[str]
