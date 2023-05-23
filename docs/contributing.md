@@ -91,13 +91,13 @@ $ poetry install
 If you'd like to run the tests, make sure to do so within the poetry environment, as  shown below. 
 ```bash
 # Run all tests
-poetry run pytest tests 
+$ poetry run pytest tests 
 
 # Run test(s) with specific prefix or specific name
-poetry run pytest tests -k "test_some_prefix_or_full_test_name"
+$ poetry run pytest tests -k "test_some_prefix_or_full_test_name"
 ```
 
 
 ### Opening a Pull Request
-
-
+Once you have finished your local work, it's time to get it reviewed by project maintainers and other contributors.
+To do so, create a Pull Request from your fork into the original repository, `gmyrianthous/dbt-airflow`.
