@@ -11,6 +11,10 @@ repo_url: https://github.com/gmyrianthous/dbt-airflow
 
 nav:
   - Overview: index.md
+  - Examples:
+      - Basic DAG: examples/example_dag_basic.md
+      - DAG with Extra Tasks: examples/example_dag_extra_tasks.md
+      - DAG without task groups: examples/example_dag_sub_task_groups.md
   - Contributing to dbt-airflow: contributing.md
 
 plugins:
