@@ -119,6 +119,7 @@ def mock_dbt_airflow_task():
             upstream_task_ids=upstream_task_ids,
             task_group=task_group,
             package_name=package_name,
+            operator_class='BashOperator',
         )
 
     return create_task

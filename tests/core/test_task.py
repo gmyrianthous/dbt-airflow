@@ -25,6 +25,7 @@ def test_dbt_airflow_task_dataclass_initialisation():
         resource_type=DbtResourceType.model,
         task_group='b',
         upstream_task_ids={'seed.mypackage.my_seed', 'model.mypackage.another_model'},
+        operator_class='BashOperator'
     )
 
     # THEN
@@ -41,7 +42,7 @@ def test_dbt_airflow_task_from_manifest_node(mock_node):
     manifest_node_name = 'model.mypackage.my_model'
 
     # WHEN
-    actual = DbtAirflowTask.from_manifest_node(manifest_node_name, mock_node)
+    actual = DbtAirflowTask.from_manifest_node(manifest_node_name, mock_node, 'BashOperator')
 
     # THEN
     assert actual.task_id == 'model.mypackage.my_model'
@@ -49,6 +50,7 @@ def test_dbt_airflow_task_from_manifest_node(mock_node):
     assert actual.resource_type == DbtResourceType.model
     assert actual.upstream_task_ids == {'seed.mypackage.my_seed', 'model.mypackage.another_model'}
     assert actual.model_name == 'my_model'
+    assert actual.operator_class == 'BashOperator'
 
 
 def test_dbt_airflow_task_test_task_from_manifest_node(mock_node):
@@ -62,7 +64,9 @@ def test_dbt_airflow_task_test_task_from_manifest_node(mock_node):
     parent_manifest_name = 'model.mypackage.my_model'
 
     # WHEN
-    actual = DbtAirflowTask.test_task_from_manifest_node(parent_manifest_name, mock_node)
+    actual = DbtAirflowTask.test_task_from_manifest_node(
+        parent_manifest_name, mock_node, 'BashOperator'
+    )
 
     # THEN
     assert actual.task_id == 'test.mypackage.my_model'
@@ -72,6 +76,7 @@ def test_dbt_airflow_task_test_task_from_manifest_node(mock_node):
     assert actual.upstream_task_ids == {parent_manifest_name}
     assert actual.task_group == mock_node.task_group
     assert actual.package_name == mock_node.package_name
+    assert actual.operator_class == 'BashOperator'
 
 
 @pytest.mark.parametrize(

@@ -5,15 +5,12 @@ from airflow.operators.bash import BashOperator
 from airflow.utils.decorators import apply_defaults
 
 
-class DbtOperator(BashOperator):
+class DbtBashOperator(BashOperator):
     """
     This child class inherits from BashOperator and enriches its functionality such that various
     dbt commands can be executed as Airflow Operators. Given that dbt is a command-line tool, it
     makes sense to run these commands from bash (and thus BashOperator is used in the context of
     Airflow).
-
-    Note:
-        - In the future, we may consider the KubernetesPodOperator
     """
     @apply_defaults
     def __init__(
@@ -48,7 +45,7 @@ class DbtOperator(BashOperator):
                f'--select {self.resource_name}'
 
 
-class DbtRunOperator(DbtOperator):
+class DbtRunBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `run` operation.
     """
@@ -57,7 +54,7 @@ class DbtRunOperator(DbtOperator):
         super().__init__(dbt_command='run', **kwargs)
 
 
-class DbtSeedOperator(DbtOperator):
+class DbtSeedBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `seed` operation.
     """
@@ -65,7 +62,7 @@ class DbtSeedOperator(DbtOperator):
         super().__init__(dbt_command='seed', **kwargs)
 
 
-class DbtTestOperator(DbtOperator):
+class DbtTestBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `test` operation.
     """
@@ -73,7 +70,7 @@ class DbtTestOperator(DbtOperator):
         super().__init__(dbt_command='test', **kwargs)
 
 
-class DbtSnapshotOperator(DbtOperator):
+class DbtSnapshotBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `snapshot` operation.
     """
