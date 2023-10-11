@@ -19,6 +19,7 @@ class DbtAirflowTaskBuilder:
     def __init__(
         self,
         manifest_path: str,
+        operator_class: str,
         extra_tasks: Optional[List[ExtraTask]] = None,
     ) -> None:
         self.manifest_path = os.path.abspath(manifest_path)
@@ -30,6 +31,8 @@ class DbtAirflowTaskBuilder:
             self.extra_tasks = []
         else:
             self.extra_tasks = extra_tasks
+
+        self.operator_class = operator_class
 
     def _add_extra_tasks(self) -> None:
         """
@@ -61,10 +64,20 @@ class DbtAirflowTaskBuilder:
         Creates a task from the input manifest node. If the node also has test, an additional
         test task also gets created.
         """
-        self.task_list.append(DbtAirflowTask.from_manifest_node(manifest_node_name, node))
+        self.task_list.append(
+            DbtAirflowTask.from_manifest_node(
+                manifest_node_name,
+                node,
+                self.operator_class,
+            )
+        )
         if manifest_node_name in self.nodes_with_tests:
             self.task_list.append(
-                DbtAirflowTask.test_task_from_manifest_node(manifest_node_name, node)
+                DbtAirflowTask.test_task_from_manifest_node(
+                    manifest_node_name,
+                    node,
+                    self.operator_class,
+                )
             )
 
     def _create_tasks_with_tests(self) -> None:

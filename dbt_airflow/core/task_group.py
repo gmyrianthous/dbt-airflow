@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from airflow.utils.task_group import TaskGroup
 
@@ -15,6 +15,8 @@ class DbtTaskGroup(TaskGroup):
         dbt_target: str,
         dbt_profile_path: Path,
         dbt_project_path: Path,
+        operator_class: str,
+        operator_kwargs: Optional[Dict[Any, Any]] = None,
         create_sub_task_groups: Optional[bool] = True,
         extra_tasks: Optional[List[ExtraTask]] = None,
         *args,
@@ -24,8 +26,14 @@ class DbtTaskGroup(TaskGroup):
         self.dbt_target = dbt_target
         self.dbt_profile_path = dbt_profile_path
         self.dbt_project_path = dbt_project_path
+        self.operator_class = operator_class
         self.create_sub_task_groups = create_sub_task_groups
         self.extra_tasks = extra_tasks
+
+        if operator_kwargs:
+            self.operator_kwargs = operator_kwargs
+        else:
+            self.operator_kwargs = {}
 
         super().__init__(*args, **kwargs)
 
@@ -33,6 +41,7 @@ class DbtTaskGroup(TaskGroup):
             task_builder = DbtAirflowTaskBuilder(
                 manifest_path=dbt_manifest_path.as_posix(),
                 extra_tasks=extra_tasks,
+                operator_class=operator_class,
             )
             self.tasks = task_builder.build_tasks()
             self.nested_task_groups = self._build_nested_task_groups()
@@ -59,6 +68,7 @@ class DbtTaskGroup(TaskGroup):
                 dbt_project_path=self.dbt_project_path,
                 resource_name=task.model_name,
                 task_group=self.nested_task_groups.get(task.task_group),
+                **self.operator_kwargs,
             )
             for task in self.tasks if isinstance(task, DbtAirflowTask)
         }

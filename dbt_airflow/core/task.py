@@ -4,11 +4,17 @@ from typing import Any, Callable, Dict, Optional, Set
 from airflow.models.baseoperator import BaseOperator
 
 from dbt_airflow.parser.dbt import DbtResourceType, Node
-from dbt_airflow.core.operators import (
+from dbt_airflow.operators.bash import (
     DbtRunBashOperator,
     DbtTestBashOperator,
     DbtSeedBashOperator,
     DbtSnapshotBashOperator,
+)
+from dbt_airflow.operators.kubernetes import (
+    DbtRunKubernetesPodOperator,
+    DbtTestKubernetesPodOperator,
+    DbtSeedKubernetesPodOperator,
+    DbtSnapshotKubernetesPodOperator,
 )
 
 
@@ -43,13 +49,14 @@ class DbtAirflowTask(AirflowTask):
     resource_type: DbtResourceType
     task_group: Optional[str]
     upstream_task_ids: Set[str]
+    operator_class: str
 
     def __post_init__(self):
         self.dbt_operator = self.get_dbt_operator()
         self.model_name = self.get_model_name()
 
     @classmethod
-    def from_manifest_node(cls, manifest_node_name: str, node: Node):
+    def from_manifest_node(cls, manifest_node_name: str, node: Node, operator_class: str):
         """
         Creates an instance of this dataclass from a Manifest Node
         """
@@ -60,10 +67,11 @@ class DbtAirflowTask(AirflowTask):
             upstream_task_ids=set(node.depends_on.nodes),
             task_group=node.task_group,
             package_name=node.package_name,
+            operator_class=operator_class,
         )
 
     @classmethod
-    def test_task_from_manifest_node(cls, parent_manifest_node_name: str, parent_node: Node):
+    def test_task_from_manifest_node(cls, parent_manifest_node_name: str, parent_node: Node, operator_class: str):
         """
         Creates an instance of this dataclass that corresponds to a dbt task, from the input
         parent node.
@@ -77,6 +85,7 @@ class DbtAirflowTask(AirflowTask):
             upstream_task_ids={parent_manifest_node_name},
             task_group=parent_node.task_group,
             package_name=parent_node.package_name,
+            operator_class=operator_class,
         )
 
     def get_dbt_operator(self) -> Callable:
@@ -84,13 +93,23 @@ class DbtAirflowTask(AirflowTask):
         Returns a callable that corresponds to the dbt Airflow Operator based on the instance's
         resource type.
         """
-        if self.resource_type == DbtResourceType.model:
-            return DbtRunBashOperator
-        if self.resource_type == DbtResourceType.test:
-            return DbtTestBashOperator
-        if self.resource_type == DbtResourceType.seed:
-            return DbtSeedBashOperator
-        return DbtSnapshotBashOperator
+        if self.operator_class == 'BashOperator':
+            if self.resource_type == DbtResourceType.model:
+                return DbtRunBashOperator
+            if self.resource_type == DbtResourceType.test:
+                return DbtTestBashOperator
+            if self.resource_type == DbtResourceType.seed:
+                return DbtSeedBashOperator
+            return DbtSnapshotBashOperator
+
+        if self.operator_class == 'KubernetesPodOperator':
+            if self.resource_type == DbtResourceType.model:
+                return DbtRunKubernetesPodOperator
+            if self.resource_type == DbtResourceType.test:
+                return DbtTestKubernetesPodOperator
+            if self.resource_type == DbtResourceType.seed:
+                return DbtSeedKubernetesPodOperator
+            return DbtSnapshotKubernetesPodOperator
 
     def get_model_name(self) -> str:
         """
