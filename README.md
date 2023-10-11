@@ -146,6 +146,7 @@ with DAG(
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
         extra_tasks=extra_tasks,
         create_sub_task_groups=True,
+        operator_class='BashOperator',
     )
 
     t1 >> tg >> t2
