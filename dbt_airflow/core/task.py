@@ -5,10 +5,10 @@ from airflow.models.baseoperator import BaseOperator
 
 from dbt_airflow.parser.dbt import DbtResourceType, Node
 from dbt_airflow.core.operators import (
-    DbtRunOperator,
-    DbtTestOperator,
-    DbtSeedOperator,
-    DbtSnapshotOperator,
+    DbtRunBashOperator,
+    DbtTestBashOperator,
+    DbtSeedBashOperator,
+    DbtSnapshotBashOperator,
 )
 
 
@@ -85,12 +85,12 @@ class DbtAirflowTask(AirflowTask):
         resource type.
         """
         if self.resource_type == DbtResourceType.model:
-            return DbtRunOperator
+            return DbtRunBashOperator
         if self.resource_type == DbtResourceType.test:
-            return DbtTestOperator
+            return DbtTestBashOperator
         if self.resource_type == DbtResourceType.seed:
-            return DbtSeedOperator
-        return DbtSnapshotOperator
+            return DbtSeedBashOperator
+        return DbtSnapshotBashOperator
 
     def get_model_name(self) -> str:
         """
