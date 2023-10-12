@@ -15,7 +15,7 @@ class DbtTaskGroup(TaskGroup):
         dbt_target: str,
         dbt_profile_path: Path,
         dbt_project_path: Path,
-        operator_class: str,
+        operator_class: Optional[str] = 'BashOperator',
         operator_kwargs: Optional[Dict[Any, Any]] = None,
         create_sub_task_groups: Optional[bool] = True,
         extra_tasks: Optional[List[ExtraTask]] = None,
