@@ -25,3 +25,8 @@ class InvalidDbtCommand(DbtAirflowException):
 class DuplicateTaskName(DbtAirflowException):
     """Raised when a duplicate task is identified within a TaskList"""
     pass
+
+
+class OperatorClassNotSupported(DbtAirflowException):
+    """Raised when an unsupported operator_class is provided in DbtTaskGroup"""
+    pass

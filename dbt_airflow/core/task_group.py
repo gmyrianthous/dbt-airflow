@@ -5,9 +5,12 @@ from airflow.utils.task_group import TaskGroup
 
 from dbt_airflow.core.task import ExtraTask, DbtAirflowTask
 from dbt_airflow.core.task_builder import DbtAirflowTaskBuilder
+from dbt_airflow.exceptions import OperatorClassNotSupported
 
 
 class DbtTaskGroup(TaskGroup):
+
+    SUPPORTED_OPERATORS = ['BashOperator', 'KubernetesPodOperator']
 
     def __init__(
         self,
@@ -34,6 +37,8 @@ class DbtTaskGroup(TaskGroup):
             self.operator_kwargs = operator_kwargs
         else:
             self.operator_kwargs = {}
+
+        self._input_validation()
 
         super().__init__(*args, **kwargs)
 
@@ -81,3 +86,13 @@ class DbtTaskGroup(TaskGroup):
         for task in self.tasks:
             for upstream_task in task.upstream_task_ids:
                 airflow_tasks[task.task_id] << airflow_tasks[upstream_task]
+
+    def _input_validation(self):
+        """
+        Validates user input
+        """
+        if self.operator_class not in self.SUPPORTED_OPERATORS:
+            raise OperatorClassNotSupported(
+                f'{self.operator_class} is not supported. '
+                f'Please choose one of {self.SUPPORTED_OPERATORS}'
+            )
