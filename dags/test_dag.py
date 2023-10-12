@@ -67,7 +67,7 @@ with DAG(
         dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
         extra_tasks=extra_tasks,
         create_sub_task_groups=True,
-        operator_class='KubernetesPodOperatorr',
+        operator_class='KubernetesPodOperator',
         operator_kwargs={
             'name': 'test',
             'image': 'ghcr.io/dbt-labs/dbt-bigquery:1.6.6',
