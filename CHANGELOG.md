@@ -1,3 +1,9 @@
+## 1.1.0 (2023-10-12)
+
+### Feat
+
+- **taskgroup**: Add BashOperator as the default operator_class (#90)
+
 ## 1.0.0 (2023-10-11)
 
 ## 0.3.2 (2023-05-12)
