@@ -1,3 +1,9 @@
+## 1.1.2 (2023-10-27)
+
+### Fix
+
+- **parser**: Allow empty nodes in NodeDeps model (#94)
+
 ## 1.1.1 (2023-10-12)
 
 ### Fix
