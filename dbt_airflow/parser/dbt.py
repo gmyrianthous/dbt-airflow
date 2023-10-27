@@ -16,7 +16,11 @@ class DbtResourceType(str, Enum):
 
 
 class NodeDeps(BaseModel):
-    nodes: List[str]
+    # Note: The following initialisation of a mutable object such as a list,
+    # would normally suggest a bug, but `pydantic` handles this properly,
+    # meaning that a deep copy will be created and each model instance will
+    # get its own empty list.
+    nodes: Optional[List[str]] = []
 
     def __getitem__(self, item):
         return getattr(self, item)
