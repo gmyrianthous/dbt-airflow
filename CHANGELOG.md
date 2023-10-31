@@ -1,3 +1,9 @@
+## 2.0.0 (2023-10-31)
+
+### Feat
+
+- **config**: Create config classes (#98)
+
 ## 1.1.3 (2023-10-31)
 
 ### Refactor
