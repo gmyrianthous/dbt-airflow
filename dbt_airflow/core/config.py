@@ -25,6 +25,7 @@ class DbtAirflowConfig:
 
 @dataclass
 class DbtProfileConfig:
+    """Configuration specific to the dbt profile used while running dbt-airflow operators"""
     profiles_path: Path
     target: str
 

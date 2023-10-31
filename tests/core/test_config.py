@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from dbt_airflow.core.config import (
@@ -55,3 +57,38 @@ def test_dbt_airflow_config_post_init():
     with pytest.raises(OperatorClassNotSupported, match='PythonOperator is not supported'):
         # GIVEN/WHEN
         _ = DbtAirflowConfig(operator_class='PythonOperator')
+
+
+@pytest.mark.parametrize(
+    'profiles_path, target', [
+        (Path('/home/dbt/project/profiles'), 'dev'),
+    ]
+)
+def test_dbt_profile_config_initialisation(profiles_path, target):
+    """
+    GIVEN valid arguments for DbtProfileConfig class
+    WHEN creating an instance of DbtProfileConfig object
+    THEN the object gets created with the expected field values
+    """
+    # GIVEN/WHEN
+    config = DbtProfileConfig(profiles_path=profiles_path, target=target)
+
+    # THEN
+    assert config.profiles_path == profiles_path
+    assert config.target == target
+
+
+@pytest.mark.parametrize(
+    'kwargs, missing_arg', [
+        ({'profiles_path': Path('/home/dbt/project/profiles')}, 'target'),
+        ({'target': 'dev'}, 'profiles_path'),
+    ]
+)
+def test_dbt_profile_config_invalid_init(kwargs, missing_arg):
+    """
+    GIVEN missing arguments
+    WHEN creating an instance of DbtProfileConfig
+    THEN a TypeError is raised
+    """
+    with pytest.raises(TypeError, match=f"missing 1 required positional argument: '{missing_arg}'"):
+        _ = DbtProfileConfig(**kwargs)
