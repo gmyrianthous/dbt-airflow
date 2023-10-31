@@ -24,6 +24,7 @@ except ImportError:
 
 from dbt_airflow.operators.base import DbtBaseOperator
 
+
 class DbtKubernetesPodOperator(DbtBaseOperator, KubernetesPodOperator):
 
     @apply_defaults
