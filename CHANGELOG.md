@@ -1,3 +1,9 @@
+## 1.1.3 (2023-10-31)
+
+### Refactor
+
+- **opreators**: Refactor operator classes and introduce multiple inheritence (#95)
+
 ## 1.1.2 (2023-10-27)
 
 ### Fix
