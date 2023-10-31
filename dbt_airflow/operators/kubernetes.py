@@ -1,6 +1,5 @@
 import logging
-from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from airflow.utils.decorators import apply_defaults
 
@@ -23,68 +22,38 @@ except ImportError:
             'apache-airflow-providers-cncf-kubernetes installed.'
         )
 
+from dbt_airflow.operators.base import DbtBaseOperator
 
-class DbtKubernetesPodOperator(KubernetesPodOperator):
+class DbtKubernetesPodOperator(DbtBaseOperator, KubernetesPodOperator):
 
     @apply_defaults
     def __init__(
         self,
-        name: str,
-        namespace: str,
-        image: str,
-        dbt_target_profile: str,
-        dbt_profile_path: Path,
-        dbt_project_path: Path,
-        resource_name: str,
-        dbt_command: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        self.name = name
-        self.namespace = namespace
-        self.image = image
-        self.dbt_target_profile = dbt_target_profile
-        self.dbt_profile_path = dbt_profile_path
-        self.dbt_project_path = dbt_project_path
-        self.resource_name = resource_name
-        self.dbt_command = dbt_command
-
-        super().__init__(
-            name=self.name,
-            namespace=self.namespace,
-            image=self.image,
-            cmds=self._get_cmds(),
-            **kwargs,
-        )
-
-    def _get_cmds(self):
-        return [
-            'dbt', self.dbt_command,
-            '--select', self.resource_name,
-            '--project-dir', self.dbt_project_path.as_posix(),
-            '--profiles-dir', self.dbt_profile_path.as_posix(),
-            '--target', self.dbt_target_profile
-        ]
+        super().__init__(**kwargs)
+        self.cmds = self.get_dbt_command()
 
 
 class DbtRunKubernetesPodOperator(DbtKubernetesPodOperator):
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(dbt_command='run', **kwargs)
+        super().__init__(dbt_base_command='run', **kwargs)
 
 
 class DbtTestKubernetesPodOperator(DbtKubernetesPodOperator):
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(dbt_command='test', **kwargs)
+        super().__init__(dbt_base_command='test', **kwargs)
 
 
 class DbtSeedKubernetesPodOperator(DbtKubernetesPodOperator):
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(dbt_command='seed', **kwargs)
+        super().__init__(dbt_base_command='seed', **kwargs)
 
 
 class DbtSnapshotKubernetesPodOperator(DbtKubernetesPodOperator):
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(dbt_command='snapshot', **kwargs)
+        super().__init__(dbt_base_command='snapshot', **kwargs)
