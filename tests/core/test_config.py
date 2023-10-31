@@ -61,7 +61,7 @@ def test_dbt_airflow_config_post_init():
 
 @pytest.mark.parametrize(
     'profiles_path, target', [
-        (Path('/home/dbt/project/profiles'), 'dev'),
+        pytest.param(Path('/home/dbt/project/profiles'), 'dev', id='Valid arguments'),
     ]
 )
 def test_dbt_profile_config_initialisation(profiles_path, target):
@@ -80,8 +80,16 @@ def test_dbt_profile_config_initialisation(profiles_path, target):
 
 @pytest.mark.parametrize(
     'kwargs, missing_arg', [
-        ({'profiles_path': Path('/home/dbt/project/profiles')}, 'target'),
-        ({'target': 'dev'}, 'profiles_path'),
+        pytest.param(
+            {'profiles_path': Path('/home/dbt/project/profiles')},
+            'target',
+            id='Missing `target` which is a required field',
+        ),
+        pytest.param(
+            {'target': 'dev'},
+            'profiles_path',
+            id='Missing `profiles_path` which is a required field',
+        ),
     ]
 )
 def test_dbt_profile_config_invalid_init(kwargs, missing_arg):
@@ -92,3 +100,51 @@ def test_dbt_profile_config_invalid_init(kwargs, missing_arg):
     """
     with pytest.raises(TypeError, match=f"missing 1 required positional argument: '{missing_arg}'"):
         _ = DbtProfileConfig(**kwargs)
+
+
+@pytest.mark.parametrize(
+    'project_path, manifest_path', [
+        pytest.param(
+            Path('/home/dbt/project'),
+            Path('/home/dbt/project/target/manifest.json'),
+            id='Valid arguments'
+        ),
+    ]
+)
+def test_dbt_project_config_initialisation(project_path, manifest_path):
+    """
+    GIVEN valid arguments for DbtProjectConfig class
+    WHEN creating an instance of DbtProjectConfig object
+    THEN the object gets created with the expected field values
+    """
+    # GIVEN/WHEN
+    config = DbtProjectConfig(project_path=project_path, manifest_path=manifest_path)
+
+    # THEN
+    assert config.project_path == project_path
+    assert config.manifest_path == manifest_path
+
+
+@pytest.mark.parametrize(
+    'kwargs, missing_arg', [
+        pytest.param(
+            {'project_path': Path('/home/dbt/project')},
+            'manifest_path',
+            id='Missing `manifest_path` which is a required field',
+        ),
+        pytest.param(
+            {'manifest_path': Path('/home/dbt/project/target/manifest.json')},
+            'project_path',
+            id='Missing `project_path` which is a required field',
+        ),
+    ]
+)
+def test_dbt_project_config_invalid_init(kwargs, missing_arg):
+    """
+    GIVEN missing arguments
+    WHEN creating an instance of DbtProjectConfig
+    THEN a TypeError is raised
+    """
+    with pytest.raises(TypeError, match=f"missing 1 required positional argument: '{missing_arg}'"):
+        _ = DbtProjectConfig(**kwargs)
+

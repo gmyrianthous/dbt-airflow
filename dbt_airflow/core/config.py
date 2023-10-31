@@ -32,5 +32,6 @@ class DbtProfileConfig:
 
 @dataclass
 class DbtProjectConfig:
+    """Configuration specific to the dbt project the dbt-airflow package will unwrap tasks for"""
     project_path: Path
     manifest_path: Path
