@@ -55,7 +55,7 @@ $ docker compose build --no-cache
 $ docker compose up
 ```
 Basically, the commands above will spin up the following containers:
-- An Airflow instance whose webserver can be accessd on `localhost:808` (use `airflow` and `airflow` in user/pass credentials)
+- An Airflow instance whose webserver can be accessd on `localhost:8080` (use `airflow` and `airflow` in user/pass credentials)
 - A postgres instance containing the popular Sakila data, where dbt models can materialize
 - A container that gives you access to `dbt` CLI where you can run further `dbt` commands
 
