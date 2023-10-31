@@ -1,52 +1,32 @@
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, Optional
 
 from airflow.utils.task_group import TaskGroup
 
+from dbt_airflow.core.config import DbtAirflowConfig, DbtProfileConfig, DbtProjectConfig
 from dbt_airflow.core.task import ExtraTask, DbtAirflowTask
 from dbt_airflow.core.task_builder import DbtAirflowTaskBuilder
-from dbt_airflow.exceptions import OperatorClassNotSupported
 
 
 class DbtTaskGroup(TaskGroup):
 
-    SUPPORTED_OPERATORS = ['BashOperator', 'KubernetesPodOperator']
-
     def __init__(
         self,
-        dbt_manifest_path: Path,
-        dbt_target: str,
-        dbt_profile_path: Path,
-        dbt_project_path: Path,
-        operator_class: Optional[str] = 'BashOperator',
-        operator_kwargs: Optional[Dict[Any, Any]] = None,
-        create_sub_task_groups: Optional[bool] = True,
-        extra_tasks: Optional[List[ExtraTask]] = None,
+        dbt_project_config: DbtProjectConfig,
+        dbt_profile_config: DbtProfileConfig,
+        dbt_airflow_config: Optional[DbtAirflowConfig] = DbtAirflowConfig(),
         *args,
         **kwargs
-    ):
-        self.dbt_manifest_path = dbt_manifest_path
-        self.dbt_target = dbt_target
-        self.dbt_profile_path = dbt_profile_path
-        self.dbt_project_path = dbt_project_path
-        self.operator_class = operator_class
-        self.create_sub_task_groups = create_sub_task_groups
-        self.extra_tasks = extra_tasks
-
-        if operator_kwargs:
-            self.operator_kwargs = operator_kwargs
-        else:
-            self.operator_kwargs = {}
-
-        self._input_validation()
-
+    ) -> None:
+        self.dbt_project_config = dbt_project_config
+        self.dbt_profile_config = dbt_profile_config
+        self.dbt_airflow_config = dbt_airflow_config
         super().__init__(*args, **kwargs)
 
         with self as _self:
             task_builder = DbtAirflowTaskBuilder(
-                manifest_path=dbt_manifest_path.as_posix(),
-                extra_tasks=extra_tasks,
-                operator_class=operator_class,
+                manifest_path=self.dbt_project_config.manifest_path.as_posix(),
+                extra_tasks=self.dbt_airflow_config.extra_tasks,
+                operator_class=self.dbt_airflow_config.operator_class,
             )
             self.tasks = task_builder.build_tasks()
             self.nested_task_groups = self._build_nested_task_groups()
@@ -55,7 +35,7 @@ class DbtTaskGroup(TaskGroup):
     def _build_nested_task_groups(self) -> Dict[str, TaskGroup]:
         """
         """
-        if not self.create_sub_task_groups:
+        if not self.dbt_airflow_config.create_sub_task_groups:
             return {}
 
         task_groups = {}
@@ -64,16 +44,16 @@ class DbtTaskGroup(TaskGroup):
                 task_groups[task.task_group] = TaskGroup(task.task_group)
         return task_groups
 
-    def _build_airflow_tasks(self):
+    def _build_airflow_tasks(self) -> None:
         airflow_tasks = {
             task.task_id: task.dbt_operator(
                 task_id=task.task_id,
-                dbt_target_profile=self.dbt_target,
-                dbt_profile_path=self.dbt_profile_path,
-                dbt_project_path=self.dbt_project_path,
+                dbt_target_profile=self.dbt_profile_config.target,
+                dbt_profile_path=self.dbt_profile_config.profiles_path,
+                dbt_project_path=self.dbt_project_config.project_path,
                 resource_name=task.model_name,
                 task_group=self.nested_task_groups.get(task.task_group),
-                **self.operator_kwargs,
+                **self.dbt_airflow_config.operator_kwargs,
             )
             for task in self.tasks if isinstance(task, DbtAirflowTask)
         }
@@ -86,13 +66,3 @@ class DbtTaskGroup(TaskGroup):
         for task in self.tasks:
             for upstream_task in task.upstream_task_ids:
                 airflow_tasks[task.task_id] << airflow_tasks[upstream_task]
-
-    def _input_validation(self):
-        """
-        Validates user input
-        """
-        if self.operator_class not in self.SUPPORTED_OPERATORS:
-            raise OperatorClassNotSupported(
-                f'{self.operator_class} is not supported. '
-                f'Please choose one of {self.SUPPORTED_OPERATORS}'
-            )

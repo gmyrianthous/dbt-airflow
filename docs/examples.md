@@ -9,6 +9,7 @@ from pathlib import Path
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
+from dbt_airflow.core.config import DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
 
 
@@ -23,10 +24,14 @@ with DAG(
     t2 = DummyOperator(task_id='dummy_2')
     tg = DbtTaskGroup(
         group_id='dbt-company',
-        dbt_manifest_path=Path('/path/to/target/manifest.json'),
-        dbt_target='dev',
-        dbt_project_path=Path('/path/to/dbt/project/dir'),
-        dbt_profile_path=Path('/path/to/dbt/project/profiles/dir'),
+        dbt_project_config=DbtProjectConfig(
+            project_path=Path('/path/to/dbt/project/dir'),
+            manifest_path=Path('/path/to/target/manifest.json'),
+        ),
+        dbt_profile_config=DbtProfileConfig(
+            profiles_path=Path('/path/to/dbt/project/profiles/dir'),
+            target='dev',
+        )
     )
 
     t1 >> tg >> t2

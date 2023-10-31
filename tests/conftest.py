@@ -1,6 +1,7 @@
 import pytest
+from airflow.operators.python import PythonOperator
 
-from dbt_airflow.core.task import DbtAirflowTask
+from dbt_airflow.core.task import DbtAirflowTask, ExtraTask
 from dbt_airflow.parser.dbt import DbtResourceType, Manifest
 
 
@@ -123,3 +124,14 @@ def mock_dbt_airflow_task():
         )
 
     return create_task
+
+
+@pytest.fixture
+def mock_extra_task():
+    return ExtraTask(
+        task_id='my_task',
+        operator=PythonOperator,
+        operator_args={'python_callable': lambda: print('Hello World')},
+        downstream_task_ids={'downstream_task_id'},
+        upstream_task_ids={'upstream_task_id'},
+    )

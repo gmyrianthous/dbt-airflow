@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
+from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
 from dbt_airflow.core.task import ExtraTask
 
@@ -61,18 +62,23 @@ with DAG(
 
     tg = DbtTaskGroup(
         group_id='dbt-company',
-        dbt_manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
-        dbt_target='dev',
-        dbt_project_path=Path('/opt/airflow/example_dbt_project/'),
-        dbt_profile_path=Path('/opt/airflow/example_dbt_project/profiles'),
-        extra_tasks=extra_tasks,
-        create_sub_task_groups=True,
-        operator_class='KubernetesPodOperator',
-        operator_kwargs={
-            'name': 'test',
-            'image': 'ghcr.io/dbt-labs/dbt-bigquery:1.6.6',
-            'namespace': 'default'
-        }
+        dbt_project_config=DbtProjectConfig(
+            project_path=Path('/opt/airflow/example_dbt_project/'),
+            manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
+        ),
+        dbt_profile_config=DbtProfileConfig(
+            profiles_path=Path('/opt/airflow/example_dbt_project/profiles'),
+            target='dev',
+        ),
+        dbt_airflow_config=DbtAirflowConfig(
+            extra_tasks=extra_tasks,
+            operator_class='KubernetesPodOperator',
+            operator_kwargs={
+                'name': 'test',
+                'image': 'ghcr.io/dbt-labs/dbt-bigquery:1.6.6',
+                'namespace': 'default'
+            }
+        )
     )
 
     t1 >> tg >> t2
