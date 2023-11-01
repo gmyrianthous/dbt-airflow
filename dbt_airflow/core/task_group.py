@@ -26,7 +26,7 @@ class DbtTaskGroup(TaskGroup):
             task_builder = DbtAirflowTaskBuilder(
                 manifest_path=self.dbt_project_config.manifest_path.as_posix(),
                 extra_tasks=self.dbt_airflow_config.extra_tasks,
-                operator_class=self.dbt_airflow_config.operator_class,
+                execution_operator=self.dbt_airflow_config.execution_operator,
             )
             self.tasks = task_builder.build_tasks()
             self.nested_task_groups = self._build_nested_task_groups()

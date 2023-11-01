@@ -8,6 +8,7 @@ from airflow.operators.dummy import DummyOperator
 from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
 from dbt_airflow.core.task import ExtraTask
+from dbt_airflow.operators.execution import ExecutionOperator
 
 
 with DAG(
@@ -72,7 +73,7 @@ with DAG(
         ),
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
-            operator_class='KubernetesPodOperator',
+            execution_operator=ExecutionOperator.KUBERNETES,
             operator_kwargs={
                 'name': 'test',
                 'image': 'ghcr.io/dbt-labs/dbt-bigquery:1.6.6',

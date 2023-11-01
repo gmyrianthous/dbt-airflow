@@ -1,9 +1,11 @@
 from dataclasses import dataclass, field
+
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from dbt_airflow.core.task import ExtraTask
-from dbt_airflow.exceptions import OperatorClassNotSupported
+from dbt_airflow.exceptions import ExecutionOperatorNotSupported
+from dbt_airflow.operators.execution import ExecutionOperator
 
 
 @dataclass
@@ -11,15 +13,16 @@ class DbtAirflowConfig:
     """Configuration specific to the functionality offered by dbt-airflow package"""
     create_sub_task_groups: Optional[bool] = True
     extra_tasks: Optional[List[ExtraTask]] = field(default_factory=list)
-    operator_class: Optional[str] = 'BashOperator'
+    execution_operator: Optional[ExecutionOperator] = ExecutionOperator.BASH
     operator_kwargs: Optional[Dict[Any, Any]] = field(default_factory=dict)
 
-    def __post_init__(self):
-        # Validate whether the input `operator_class` is among the supported ones.
-        valid_operators = ['BashOperator', 'KubernetesPodOperator']
-        if self.operator_class not in valid_operators:
-            raise OperatorClassNotSupported(
-                f'{self.operator_class} is not supported. Please choose one of {valid_operators}'
+    def __post_init__(self) -> None:
+        # Validate whether the input `execution_operator` is among the supported ones.
+        supported_operators = [op for op in ExecutionOperator]
+        if self.execution_operator not in supported_operators:
+            raise ExecutionOperatorNotSupported(
+                f'{self.execution_operator} is not supported. '
+                f'Please choose one of {supported_operators}'
             )
 
 

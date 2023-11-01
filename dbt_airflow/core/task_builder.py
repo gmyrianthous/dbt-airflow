@@ -4,6 +4,7 @@ import os
 from typing import List, Optional
 
 from ..exceptions import ManifestNotFound, ManifestDataNotFound
+from dbt_airflow.operators.execution import ExecutionOperator
 from dbt_airflow.core.task import DbtAirflowTask, ExtraTask
 from dbt_airflow.core.task_list import TaskList
 from dbt_airflow.parser.dbt import DbtResourceType, Manifest, Node
@@ -19,7 +20,7 @@ class DbtAirflowTaskBuilder:
     def __init__(
         self,
         manifest_path: str,
-        operator_class: str,
+        execution_operator: ExecutionOperator,
         extra_tasks: Optional[List[ExtraTask]] = None,
     ) -> None:
         self.manifest_path = os.path.abspath(manifest_path)
@@ -32,7 +33,7 @@ class DbtAirflowTaskBuilder:
         else:
             self.extra_tasks = extra_tasks
 
-        self.operator_class = operator_class
+        self.execution_operator = execution_operator
 
     def _add_extra_tasks(self) -> None:
         """
@@ -68,7 +69,7 @@ class DbtAirflowTaskBuilder:
             DbtAirflowTask.from_manifest_node(
                 manifest_node_name,
                 node,
-                self.operator_class,
+                self.execution_operator,
             )
         )
         if manifest_node_name in self.nodes_with_tests:
@@ -76,7 +77,7 @@ class DbtAirflowTaskBuilder:
                 DbtAirflowTask.test_task_from_manifest_node(
                     manifest_node_name,
                     node,
-                    self.operator_class,
+                    self.execution_operator,
                 )
             )
 

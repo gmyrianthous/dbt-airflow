@@ -27,6 +27,6 @@ class DuplicateTaskName(DbtAirflowException):
     pass
 
 
-class OperatorClassNotSupported(DbtAirflowException):
-    """Raised when an unsupported operator_class is provided in DbtTaskGroup"""
+class ExecutionOperatorNotSupported(DbtAirflowException):
+    """Raised when an unsupported execution is provided in DbtTaskGroup"""
     pass
