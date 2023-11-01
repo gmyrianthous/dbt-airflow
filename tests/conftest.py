@@ -3,6 +3,7 @@ from airflow.operators.python import PythonOperator
 
 from dbt_airflow.core.task import DbtAirflowTask, ExtraTask
 from dbt_airflow.parser.dbt import DbtResourceType, Manifest
+from dbt_airflow.operators.execution import ExecutionOperator
 
 
 @pytest.fixture
@@ -120,7 +121,7 @@ def mock_dbt_airflow_task():
             upstream_task_ids=upstream_task_ids,
             task_group=task_group,
             package_name=package_name,
-            operator_class='BashOperator',
+            execution_operator=ExecutionOperator.BASH,
         )
 
     return create_task

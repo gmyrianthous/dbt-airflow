@@ -7,7 +7,8 @@ from dbt_airflow.core.config import (
     DbtProfileConfig,
     DbtProjectConfig,
 )
-from dbt_airflow.exceptions import OperatorClassNotSupported
+from dbt_airflow.exceptions import ExecutionOperatorNotSupported
+from dbt_airflow.operators.execution import ExecutionOperator
 
 
 def test_dbt_airflow_config_initialisation():
@@ -20,7 +21,7 @@ def test_dbt_airflow_config_initialisation():
     config = DbtAirflowConfig()
 
     # THEN
-    assert config.operator_class == 'BashOperator'
+    assert config.execution_operator == ExecutionOperator.BASH
     assert config.extra_tasks == []
     assert config.operator_kwargs == {}
     assert config.create_sub_task_groups is True
@@ -35,13 +36,13 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
     # GIVEN/WHEN
     config = DbtAirflowConfig(
         create_sub_task_groups=False,
-        operator_class='KubernetesPodOperator',
+        execution_operator=ExecutionOperator.KUBERNETES,
         operator_kwargs={'namespace': 'default'},
         extra_tasks=[mock_extra_task],
     )
 
     # THEN
-    assert config.operator_class == 'KubernetesPodOperator'
+    assert config.execution_operator == ExecutionOperator.KUBERNETES
     assert config.operator_kwargs == {'namespace': 'default'}
     assert config.create_sub_task_groups is False
     assert len(config.extra_tasks) == 1
@@ -54,9 +55,9 @@ def test_dbt_airflow_config_post_init():
     THEN an exception is raised
     """
     # THEN
-    with pytest.raises(OperatorClassNotSupported, match='PythonOperator is not supported'):
+    with pytest.raises(ExecutionOperatorNotSupported, match='PythonOperator is not supported'):
         # GIVEN/WHEN
-        _ = DbtAirflowConfig(operator_class='PythonOperator')
+        _ = DbtAirflowConfig(execution_operator='PythonOperator')
 
 
 @pytest.mark.parametrize(
