@@ -1,3 +1,9 @@
+## 2.1.0 (2023-11-01)
+
+### Feat
+
+- **core**: Create enum class to represent available execution operators (#101)
+
 ## 2.0.0 (2023-10-31)
 
 ### Feat
