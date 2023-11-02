@@ -1,3 +1,9 @@
+## 2.2.0 (2023-11-02)
+
+### Feat
+
+- **operators**: Add support for full-refresh (#102)
+
 ## 2.1.0 (2023-11-01)
 
 ### Feat
