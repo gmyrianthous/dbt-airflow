@@ -25,6 +25,7 @@ def test_dbt_airflow_config_initialisation():
     assert config.extra_tasks == []
     assert config.operator_kwargs == {}
     assert config.create_sub_task_groups is True
+    assert config.full_refresh is False
 
 
 def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
@@ -39,6 +40,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
         execution_operator=ExecutionOperator.KUBERNETES,
         operator_kwargs={'namespace': 'default'},
         extra_tasks=[mock_extra_task],
+        full_refresh=True,
     )
 
     # THEN
@@ -46,6 +48,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
     assert config.operator_kwargs == {'namespace': 'default'}
     assert config.create_sub_task_groups is False
     assert len(config.extra_tasks) == 1
+    assert config.full_refresh is True
 
 
 def test_dbt_airflow_config_post_init():

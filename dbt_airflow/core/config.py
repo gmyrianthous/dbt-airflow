@@ -15,6 +15,7 @@ class DbtAirflowConfig:
     extra_tasks: Optional[List[ExtraTask]] = field(default_factory=list)
     execution_operator: Optional[ExecutionOperator] = ExecutionOperator.BASH
     operator_kwargs: Optional[Dict[Any, Any]] = field(default_factory=dict)
+    full_refresh: Optional[bool] = False
 
     def __post_init__(self) -> None:
         # Validate whether the input `execution_operator` is among the supported ones.
