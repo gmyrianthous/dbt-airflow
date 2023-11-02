@@ -53,6 +53,7 @@ class DbtTaskGroup(TaskGroup):
                 dbt_project_path=self.dbt_project_config.project_path,
                 resource_name=task.model_name,
                 full_refresh=self.dbt_airflow_config.full_refresh,
+                variables=self.dbt_airflow_config.variables,
                 task_group=self.nested_task_groups.get(task.task_group),
                 **self.dbt_airflow_config.operator_kwargs,
             )
