@@ -20,6 +20,6 @@ COPY --chown=airflow . .
 RUN python -m pip install .
 
 # Setup dbt for the example project
-RUN pip install dbt-postgres==1.3.1
+RUN pip install dbt-postgres==1.5.9
 
 RUN dbt deps --project-dir /opt/airflow/example_dbt_project

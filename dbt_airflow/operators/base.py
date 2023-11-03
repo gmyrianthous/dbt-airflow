@@ -19,6 +19,8 @@ class DbtBaseOperator(BaseOperator):
         full_refresh: bool,
         no_write_json: bool,
         variables: Optional[str],
+        warn_error: Optional[bool] = False,
+        warn_error_options: Optional[str] = None,
         no_partial_parse: Optional[bool] = False,
         **kwargs: Any,
     ) -> None:
@@ -35,6 +37,9 @@ class DbtBaseOperator(BaseOperator):
         :param no_write_json: Indicates whether `--no-write-json` will be included when running
             the command
         :param variables: If not empty, will be passed as string and called with `--vars` flag
+        :param warn_error: Indicates whether `--warn-error` flag will be included when running
+            the command
+        :param warn_error_options: If specified, will be passed along `--warn-error-options` flag
         :param no_partial_parse: Indicates whether `--no-partial-parse` will be included when
             running the command
         :param kwargs: Keyword arguments
@@ -48,6 +53,8 @@ class DbtBaseOperator(BaseOperator):
         self.exclude = exclude
         self.full_refresh = full_refresh
         self.no_write_json = no_write_json
+        self.warn_error = warn_error
+        self.warn_error_options = warn_error_options
         self.no_partial_parse = no_partial_parse
         self.variables = variables
 
@@ -66,6 +73,12 @@ class DbtBaseOperator(BaseOperator):
 
         if self.no_partial_parse:
             dbt_command.append('--no-partial-parse')
+
+        if self.warn_error:
+            dbt_command.append('--warn-error')
+
+        if self.warn_error_options:
+            dbt_command.extend(['--warn-error-options', f"'{self.warn_error_options}'"])
 
         # Subcommands
         dbt_command.append(self.dbt_base_command)

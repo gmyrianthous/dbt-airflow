@@ -31,6 +31,8 @@ def test_dbt_airflow_config_initialisation():
     assert config.no_write_json is True
     assert config.variables is None
     assert config.no_partial_parse is False
+    assert config.warn_error is False
+    assert config.warn_error_options is None
 
 
 def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
@@ -51,6 +53,8 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
         no_write_json=False,
         variables='{key: value, date: 20190101}',
         no_partial_parse=True,
+        warn_error=True,
+        warn_error_options='{"include": "all", "exclude": ["NoNodesForSelectionCriteria"]}',
     )
 
     # THEN
@@ -64,6 +68,9 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
     assert config.no_write_json is False
     assert config.variables == '{key: value, date: 20190101}'
     assert config.no_partial_parse is True
+    assert config.warn_error is True
+    assert config.warn_error_options == \
+           '{"include": "all", "exclude": ["NoNodesForSelectionCriteria"]}'
 
 
 def test_dbt_airflow_config_post_init():
