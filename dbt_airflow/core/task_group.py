@@ -57,6 +57,7 @@ class DbtTaskGroup(TaskGroup):
                 selectors=[task.model_name] + self.dbt_airflow_config.selectors,
                 exclude=self.dbt_airflow_config.exclude,
                 full_refresh=self.dbt_airflow_config.full_refresh,
+                no_write_json=self.dbt_airflow_config.no_write_json,
                 variables=self.dbt_airflow_config.variables,
                 task_group=self.nested_task_groups.get(task.task_group),
                 **self.dbt_airflow_config.operator_kwargs,

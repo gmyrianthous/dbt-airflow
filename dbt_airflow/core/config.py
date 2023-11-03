@@ -18,6 +18,7 @@ class DbtAirflowConfig:
     selectors: Optional[List[str]] = field(default_factory=list)
     exclude: Optional[List[str]] = field(default_factory=list)
     full_refresh: Optional[bool] = False
+    no_write_json: Optional[bool] = True
     variables: Optional[str] = None
 
     def __post_init__(self) -> None:
