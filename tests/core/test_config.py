@@ -28,6 +28,7 @@ def test_dbt_airflow_config_initialisation():
     assert config.selectors == []
     assert config.exclude == []
     assert config.full_refresh is False
+    assert config.no_write_json is True
     assert config.variables is None
 
 
@@ -46,6 +47,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
         selectors=['tag:daily'],
         exclude=['tag:hourly'],
         full_refresh=True,
+        no_write_json=False,
         variables='{key: value, date: 20190101}'
     )
 
@@ -57,6 +59,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
     assert config.selectors == ['tag:daily']
     assert config.exclude == ['tag:hourly']
     assert config.full_refresh is True
+    assert config.no_write_json is False
     assert config.variables == '{key: value, date: 20190101}'
 
 

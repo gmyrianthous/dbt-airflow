@@ -17,6 +17,7 @@ class DbtBaseOperator(BaseOperator):
         selectors: Optional[List[str]],
         exclude: Optional[List[str]],
         full_refresh: bool,
+        no_write_json: bool,
         variables: Optional[str],
         **kwargs: Any,
     ) -> None:
@@ -30,6 +31,8 @@ class DbtBaseOperator(BaseOperator):
         :param selectors: The entities that will be passed in `--select` flag
         :param exclude: Entities specified will be included in the `--exclude` flag
         :param full_refresh: Whether a `--full-refresh` flag will be passed when running dbt
+        :param no_write_json: Indicates whether `--no-write-json` will be included when running
+            the command
         :param variables: If not empty, will be passed as string and called with `--vars` flag
         :param kwargs: Keyword arguments
         """
@@ -41,6 +44,7 @@ class DbtBaseOperator(BaseOperator):
         self.selectors = selectors
         self.exclude = exclude
         self.full_refresh = full_refresh
+        self.no_write_json = no_write_json
         self.variables = variables
 
     def get_dbt_command(self) -> List[str]:
@@ -48,7 +52,12 @@ class DbtBaseOperator(BaseOperator):
         Constructs a list consisting of the building components of the dbt command
         that the operator will execute.
         """
-        dbt_command = ['dbt', '--no-write-json', self.dbt_base_command]
+        dbt_command = ['dbt']
+
+        if self.no_write_json:
+            dbt_command.append('--no-write-json')
+
+        dbt_command.append(self.dbt_base_command)
         dbt_command.extend(['--project-dir', self.dbt_project_path.as_posix()])
         dbt_command.extend(['--profiles-dir', self.dbt_profile_path.as_posix()])
         dbt_command.extend(['--target', self.dbt_target_profile])
