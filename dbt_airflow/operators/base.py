@@ -13,8 +13,8 @@ class DbtBaseOperator(BaseOperator):
         dbt_target_profile: str,
         dbt_profile_path: Path,
         dbt_project_path: Path,
-        resource_name: str,
         dbt_base_command: str,
+        selectors: Optional[List[str]],
         full_refresh: bool,
         variables: Optional[str],
         **kwargs: Any,
@@ -25,8 +25,8 @@ class DbtBaseOperator(BaseOperator):
         :param dbt_target_profile: The name of the profile target, as specified in profiles.yml
         :param dbt_profile_path: The path to the profiles.yml file
         :param dbt_project_path: The path to the dbt project
-        :param resource_name: The name of the dbt resource the operator will be executed for
         :param dbt_base_command: The base command that will be used when calling dbt CLI
+        :param selectors: The entities that will be passed in `--select` flag
         :param full_refresh: Whether a `--full-refresh` flag will be passed when running dbt
         :param variables: If not empty, will be passed as string and called with `--vars` flag
         :param kwargs: Keyword arguments
@@ -35,8 +35,8 @@ class DbtBaseOperator(BaseOperator):
         self.dbt_target_profile = dbt_target_profile
         self.dbt_profile_path = dbt_profile_path
         self.dbt_project_path = dbt_project_path
-        self.resource_name = resource_name
         self.dbt_base_command = dbt_base_command
+        self.selectors = selectors
         self.full_refresh = full_refresh
         self.variables = variables
 
@@ -49,7 +49,10 @@ class DbtBaseOperator(BaseOperator):
         dbt_command.extend(['--project-dir', self.dbt_project_path.as_posix()])
         dbt_command.extend(['--profiles-dir', self.dbt_profile_path.as_posix()])
         dbt_command.extend(['--target', self.dbt_target_profile])
-        dbt_command.extend(['--select', self.resource_name])
+
+        if self.selectors:
+            dbt_command.append('--select')
+            dbt_command.extend(self.selectors)
 
         # full refreshes are supported only by `run` and `seed` commands
         # https://docs.getdbt.com/reference/resource-configs/full_refresh
