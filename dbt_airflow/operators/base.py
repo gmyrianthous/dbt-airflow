@@ -15,6 +15,7 @@ class DbtBaseOperator(BaseOperator):
         dbt_project_path: Path,
         dbt_base_command: str,
         selectors: Optional[List[str]],
+        exclude: Optional[List[str]],
         full_refresh: bool,
         variables: Optional[str],
         **kwargs: Any,
@@ -27,6 +28,7 @@ class DbtBaseOperator(BaseOperator):
         :param dbt_project_path: The path to the dbt project
         :param dbt_base_command: The base command that will be used when calling dbt CLI
         :param selectors: The entities that will be passed in `--select` flag
+        :param exclude: Entities specified will be included in the `--exclude` flag
         :param full_refresh: Whether a `--full-refresh` flag will be passed when running dbt
         :param variables: If not empty, will be passed as string and called with `--vars` flag
         :param kwargs: Keyword arguments
@@ -37,6 +39,7 @@ class DbtBaseOperator(BaseOperator):
         self.dbt_project_path = dbt_project_path
         self.dbt_base_command = dbt_base_command
         self.selectors = selectors
+        self.exclude = exclude
         self.full_refresh = full_refresh
         self.variables = variables
 
@@ -53,6 +56,10 @@ class DbtBaseOperator(BaseOperator):
         if self.selectors:
             dbt_command.append('--select')
             dbt_command.extend(self.selectors)
+
+        if self.exclude:
+            dbt_command.append('--exclude')
+            dbt_command.extend(self.exclude)
 
         # full refreshes are supported only by `run` and `seed` commands
         # https://docs.getdbt.com/reference/resource-configs/full_refresh

@@ -16,6 +16,7 @@ class DbtAirflowConfig:
     execution_operator: Optional[ExecutionOperator] = ExecutionOperator.BASH
     operator_kwargs: Optional[Dict[Any, Any]] = field(default_factory=dict)
     selectors: Optional[List[str]] = field(default_factory=list)
+    exclude: Optional[List[str]] = field(default_factory=list)
     full_refresh: Optional[bool] = False
     variables: Optional[str] = None
 
