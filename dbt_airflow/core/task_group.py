@@ -60,6 +60,8 @@ class DbtTaskGroup(TaskGroup):
                 no_write_json=self.dbt_airflow_config.no_write_json,
                 variables=self.dbt_airflow_config.variables,
                 no_partial_parse=self.dbt_airflow_config.no_partial_parse,
+                warn_error=self.dbt_airflow_config.warn_error,
+                warn_error_options=self.dbt_airflow_config.warn_error_options,
                 task_group=self.nested_task_groups.get(task.task_group),
                 **self.dbt_airflow_config.operator_kwargs,
             )
