@@ -1,3 +1,9 @@
+## 2.4.0 (2023-11-03)
+
+### Feat
+
+- **core**: Add support for multiple selectors (#106)
+
 ## 2.3.0 (2023-11-02)
 
 ### Feat
