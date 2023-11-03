@@ -26,6 +26,7 @@ def test_dbt_airflow_config_initialisation():
     assert config.operator_kwargs == {}
     assert config.create_sub_task_groups is True
     assert config.selectors == []
+    assert config.exclude == []
     assert config.full_refresh is False
     assert config.variables is None
 
@@ -43,6 +44,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
         operator_kwargs={'namespace': 'default'},
         extra_tasks=[mock_extra_task],
         selectors=['tag:daily'],
+        exclude=['tag:hourly'],
         full_refresh=True,
         variables='{key: value, date: 20190101}'
     )
@@ -53,6 +55,7 @@ def test_dbt_airflow_config_with_user_defined_arguments(mock_extra_task):
     assert config.create_sub_task_groups is False
     assert len(config.extra_tasks) == 1
     assert config.selectors == ['tag:daily']
+    assert config.exclude == ['tag:hourly']
     assert config.full_refresh is True
     assert config.variables == '{key: value, date: 20190101}'
 

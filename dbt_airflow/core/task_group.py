@@ -45,6 +45,9 @@ class DbtTaskGroup(TaskGroup):
         return task_groups
 
     def _build_airflow_tasks(self) -> None:
+        """
+        Creates the Airflow Tasks and handles all of their dependencies
+        """
         airflow_tasks = {
             task.task_id: task.dbt_operator(
                 task_id=task.task_id,
