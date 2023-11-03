@@ -1,3 +1,9 @@
+## 2.5.0 (2023-11-03)
+
+### Feat
+
+- **core**: Add support for '--exclude' flag (#108)
+
 ## 2.4.0 (2023-11-03)
 
 ### Feat
