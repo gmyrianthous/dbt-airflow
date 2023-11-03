@@ -1,3 +1,9 @@
+## 2.6.0 (2023-11-03)
+
+### Feat
+
+- **core**: Add support for '--no-write-json' flag (#111)
+
 ## 2.5.0 (2023-11-03)
 
 ### Feat
