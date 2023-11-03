@@ -1,3 +1,9 @@
+## 2.7.0 (2023-11-03)
+
+### Feat
+
+- **core**: Add support for '--no-partial-parse' flag (#114)
+
 ## 2.6.0 (2023-11-03)
 
 ### Feat
