@@ -20,6 +20,7 @@ class DbtAirflowConfig:
     full_refresh: Optional[bool] = False
     no_write_json: Optional[bool] = True
     variables: Optional[str] = None
+    no_partial_parse: Optional[bool] = False
 
     def __post_init__(self) -> None:
         # Validate whether the input `execution_operator` is among the supported ones.

@@ -19,6 +19,7 @@ class DbtBaseOperator(BaseOperator):
         full_refresh: bool,
         no_write_json: bool,
         variables: Optional[str],
+        no_partial_parse: Optional[bool] = False,
         **kwargs: Any,
     ) -> None:
         """
@@ -34,6 +35,8 @@ class DbtBaseOperator(BaseOperator):
         :param no_write_json: Indicates whether `--no-write-json` will be included when running
             the command
         :param variables: If not empty, will be passed as string and called with `--vars` flag
+        :param no_partial_parse: Indicates whether `--no-partial-parse` will be included when
+            running the command
         :param kwargs: Keyword arguments
         """
         super().__init__(**kwargs)
@@ -45,6 +48,7 @@ class DbtBaseOperator(BaseOperator):
         self.exclude = exclude
         self.full_refresh = full_refresh
         self.no_write_json = no_write_json
+        self.no_partial_parse = no_partial_parse
         self.variables = variables
 
     def get_dbt_command(self) -> List[str]:
@@ -54,9 +58,16 @@ class DbtBaseOperator(BaseOperator):
         """
         dbt_command = ['dbt']
 
+        # CLI flags
+        # These should come right after the dbt prefix and its subcommands
+        # See more: https://docs.getdbt.com/reference/global-configs/command-line-flags
         if self.no_write_json:
             dbt_command.append('--no-write-json')
 
+        if self.no_partial_parse:
+            dbt_command.append('--no-partial-parse')
+
+        # Subcommands
         dbt_command.append(self.dbt_base_command)
         dbt_command.extend(['--project-dir', self.dbt_project_path.as_posix()])
         dbt_command.extend(['--profiles-dir', self.dbt_profile_path.as_posix()])

@@ -157,6 +157,7 @@ with DAG(
             exclude=['tag:hourly'],
             full_refresh=True,
             variables='{key: value, date: 20190101}',
+            no_partial_parse=True,
         )
     )
 
