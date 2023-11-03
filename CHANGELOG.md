@@ -1,3 +1,9 @@
+## 2.8.0 (2023-11-03)
+
+### Feat
+
+- **core**: Add support for '--warn-error' and '--warn-error-options' (#117)
+
 ## 2.7.0 (2023-11-03)
 
 ### Feat
