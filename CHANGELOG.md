@@ -1,3 +1,9 @@
+## 2.8.1 (2023-11-06)
+
+### Fix
+
+- **core**: Update selectors to select (#120)
+
 ## 2.8.0 (2023-11-03)
 
 ### Feat
