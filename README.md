@@ -153,7 +153,7 @@ with DAG(
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
-            selectors=['tag:daily'],
+            select=['tag:daily'],
             exclude=['tag:hourly'],
             full_refresh=True,
             variables='{key: value, date: 20190101}',
