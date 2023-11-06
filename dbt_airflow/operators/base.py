@@ -14,7 +14,7 @@ class DbtBaseOperator(BaseOperator):
         dbt_profile_path: Path,
         dbt_project_path: Path,
         dbt_base_command: str,
-        selectors: Optional[List[str]],
+        select: Optional[List[str]],
         exclude: Optional[List[str]],
         full_refresh: bool,
         no_write_json: bool,
@@ -31,7 +31,7 @@ class DbtBaseOperator(BaseOperator):
         :param dbt_profile_path: The path to the profiles.yml file
         :param dbt_project_path: The path to the dbt project
         :param dbt_base_command: The base command that will be used when calling dbt CLI
-        :param selectors: The entities that will be passed in `--select` flag
+        :param select: The entities that will be passed in `--select` flag
         :param exclude: Entities specified will be included in the `--exclude` flag
         :param full_refresh: Whether a `--full-refresh` flag will be passed when running dbt
         :param no_write_json: Indicates whether `--no-write-json` will be included when running
@@ -49,7 +49,7 @@ class DbtBaseOperator(BaseOperator):
         self.dbt_profile_path = dbt_profile_path
         self.dbt_project_path = dbt_project_path
         self.dbt_base_command = dbt_base_command
-        self.selectors = selectors
+        self.select = select
         self.exclude = exclude
         self.full_refresh = full_refresh
         self.no_write_json = no_write_json
@@ -86,9 +86,9 @@ class DbtBaseOperator(BaseOperator):
         dbt_command.extend(['--profiles-dir', self.dbt_profile_path.as_posix()])
         dbt_command.extend(['--target', self.dbt_target_profile])
 
-        if self.selectors:
+        if self.select:
             dbt_command.append('--select')
-            dbt_command.extend(self.selectors)
+            dbt_command.extend(self.select)
 
         if self.exclude:
             dbt_command.append('--exclude')

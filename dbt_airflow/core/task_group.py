@@ -54,7 +54,7 @@ class DbtTaskGroup(TaskGroup):
                 dbt_target_profile=self.dbt_profile_config.target,
                 dbt_profile_path=self.dbt_profile_config.profiles_path,
                 dbt_project_path=self.dbt_project_config.project_path,
-                selectors=[task.model_name] + self.dbt_airflow_config.selectors,
+                select=[task.model_name] + self.dbt_airflow_config.select,
                 exclude=self.dbt_airflow_config.exclude,
                 full_refresh=self.dbt_airflow_config.full_refresh,
                 no_write_json=self.dbt_airflow_config.no_write_json,
