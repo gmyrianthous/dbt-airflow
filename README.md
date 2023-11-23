@@ -2,6 +2,7 @@
 ![docs](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/docs.yml/badge.svg?branch=main)
 ![main](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/main.yml/badge.svg?branch=main)
 ![validate_pull_request](https://github.com/gmyrianthous/dbt-airflow/actions/workflows/validate_pull_request.yml/badge.svg?branch=main)
+[![Downloads](https://static.pepy.tech/badge/dbt-airflow)](https://pepy.tech/project/dbt-airflow)
 
 # dbt-airflow
 A Python package that helps Data and Analytics engineers render dbt projects in Apache Airflow DAGs such that
