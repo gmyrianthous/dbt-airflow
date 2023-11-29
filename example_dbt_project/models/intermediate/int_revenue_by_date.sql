@@ -1,3 +1,8 @@
+{{
+    config(
+        tags=['hourly']
+    )
+}}
 SELECT
     DATE(payment_date) AS payment_date,
     SUM(amount) AS amount

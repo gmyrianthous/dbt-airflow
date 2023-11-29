@@ -7,4 +7,4 @@
 SELECT
     *
 FROM
-    {{ source('public', 'payment') }}
+    {{ source('public', 'store') }}

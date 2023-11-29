@@ -1,10 +1,10 @@
 {{
     config(
         materialized='table',
-        tags=["finance"],
+        tags=["hourly"],
     )
 }}
 SELECT
     *
 FROM
-    {{ source('public', 'payment') }}
+    {{ source('public', 'customer') }}

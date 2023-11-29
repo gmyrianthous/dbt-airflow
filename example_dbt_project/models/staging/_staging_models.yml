@@ -11,3 +11,42 @@ models:
       - name: customer_id
         tests:
           - not_null
+  - name: stg_staff
+    description: "Staging model consisting of staff details"
+    tags: ['staff_tag']
+    columns:
+      - name: staff_id
+        tests:
+          - unique
+          - not_null
+      - name: store_id
+        tests:
+          - not_null
+  - name: stg_customer
+    description: "Staging model consisting of customer details"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: store_id
+        tests:
+          - not_null
+  - name: stg_store
+    description: "Staging model consisting of store details"
+    columns:
+      - name: store_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_rental
+    description: "Staging model consisting of rental details"
+    columns:
+      - name: rental_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+

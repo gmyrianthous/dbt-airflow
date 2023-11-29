@@ -1,9 +1,9 @@
 {{
     config(
         materialized='table',
+        tags=["finance"],
     )
 }}
-
 SELECT
     payment_date,
     amount,
