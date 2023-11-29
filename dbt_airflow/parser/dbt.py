@@ -84,7 +84,7 @@ class Manifest(BaseModel):
     @classmethod
     def initialization(cls, data: Dict[str, Any], **kwargs) -> "Manifest":
         """
-        This method serves as a factory for creating instances of the Manifest class. It can initialise an instance
+        This method serves as a factory for creating instances of the Manifest class. It can initialize an instance
         either with the raw data provided or with a subset of the data filtered based on tags, if provided.
         """
         tags = kwargs.get('tags', [])

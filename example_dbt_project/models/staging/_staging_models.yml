@@ -13,7 +13,7 @@ models:
           - not_null
   - name: stg_staff
     description: "Staging model consisting of staff details"
-    tags: ['staff_tag']
+    tags: ["staff_tag"]
     columns:
       - name: staff_id
         tests:

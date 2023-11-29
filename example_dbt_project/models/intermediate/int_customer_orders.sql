@@ -20,8 +20,8 @@ select
     c.customer_id,
     c.first_name,
     c.last_name,
-    r.first_rental_date,
-    r.most_recent_rental_date,
+    cr.first_rental_date,
+    cr.most_recent_rental_date,
     coalesce(cr.number_of_rentals, 0) as number_of_rentals
 
 from {{ ref('stg_customer') }} c
