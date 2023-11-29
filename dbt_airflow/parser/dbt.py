@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
+import logging
 
 from pydantic import BaseModel, validator
 
@@ -42,6 +43,7 @@ class Node(BaseModel):
     resource_type: DbtResourceType
     depends_on: Optional[NodeDeps]
     fqn: Optional[List[str]]
+    tags: Optional[List[str]]
     package_name: str
     name: str
     task_group: Optional[str] = None
@@ -78,3 +80,53 @@ class Manifest(BaseModel):
             'snapshots': node_types.count(DbtResourceType.snapshot),
             'seeds': node_types.count(DbtResourceType.seed),
         }
+
+    @classmethod
+    def initialization(cls, data: Dict[str, Any], **kwargs) -> "Manifest":
+        """
+        This method serves as a factory for creating instances of the Manifest class. It can initialise an instance
+        either with the raw data provided or with a subset of the data filtered based on tags, if provided.
+        """
+        tags = kwargs.get('tags', [])
+        if tags:
+            logging.info(f'Filtering nodes by tags {tags}')
+            return cls.filter_by_tags(data, tags)
+        else:
+            return cls(**data)
+
+
+    @classmethod
+    def filter_by_tags(cls, data,tags: List[str]) -> "Manifest":
+        """
+        Filters a dataset of nodes based on specified tags and dependencies.
+
+        This method processes a given dataset to select nodes that match one or more of the provided tags.
+        It also includes 'test' type nodes if they have dependencies on any of the selected nodes.
+        Post filtering, it updates the dependencies of the nodes to ensure they are consistent
+        within the context of the filtered dataset.
+        """
+
+        # Step 1: Filter nodes based on tags
+        filtered_nodes = {
+            node_name: node for node_name, node in data["nodes"].items()
+            if any(tag in node["tags"] for tag in tags)
+        }
+
+        # Step 2: Filter for 'test' nodes with dependencies in filtered_nodes
+        filtered_nodes_with_test = {
+            node_name: node for node_name, node in data["nodes"].items()
+            if node["resource_type"] == "test" and any(dep in filtered_nodes for dep in node["depends_on"]["nodes"])
+        }
+
+        final_filtered_nodes = {**filtered_nodes, **filtered_nodes_with_test}
+
+        # Step 3: Update dependencies
+        for node in final_filtered_nodes.values():
+            updated_dependent_nodes=[]
+            for dependent_node in node["depends_on"]["nodes"]:
+                if dependent_node in final_filtered_nodes.keys():
+                    updated_dependent_nodes.append(dependent_node)
+            node["depends_on"]["nodes"] = updated_dependent_nodes
+
+        filtered_data = {'nodes': final_filtered_nodes}
+        return cls(**filtered_data)
