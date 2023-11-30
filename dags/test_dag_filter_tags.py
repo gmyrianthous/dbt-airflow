@@ -24,7 +24,7 @@ extra_tasks = [
 ]
 
 with DAG(
-    dag_id='test_dag',
+    dag_id='test_dag_filter_tags',
     start_date=datetime(2021, 1, 1),
     catchup=False,
     tags=['example'],
