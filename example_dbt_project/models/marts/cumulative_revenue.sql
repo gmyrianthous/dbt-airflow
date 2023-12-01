@@ -1,7 +1,7 @@
 {{
     config(
         materialized='table',
-        tags=["finance"],
+        tags=['hourly', 'finance'],
     )
 }}
 SELECT

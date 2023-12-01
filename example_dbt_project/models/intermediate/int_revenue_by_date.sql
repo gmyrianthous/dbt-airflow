@@ -1,6 +1,6 @@
 {{
     config(
-        tags=['hourly']
+        tags=['hourly', 'finance']
     )
 }}
 SELECT
