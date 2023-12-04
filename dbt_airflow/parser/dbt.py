@@ -1,6 +1,7 @@
-from enum import Enum
-from typing import Dict, List, Optional, Any
 import logging
+
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, validator
 
@@ -91,12 +92,12 @@ class Manifest(BaseModel):
         if tags:
             logging.info(f'Filtering nodes by tags {tags}')
             return cls.filter_by_tags(data, tags)
-        else:
-            return cls(**data)
+
+        return cls(**data)
 
 
     @classmethod
-    def filter_by_tags(cls, data,tags: List[str]) -> "Manifest":
+    def filter_by_tags(cls, data, tags: List[str]) -> "Manifest":
         """
         Filters a dataset of nodes based on specified tags and dependencies.
 
@@ -115,7 +116,7 @@ class Manifest(BaseModel):
         # Step 2: Filter for 'test' nodes with dependencies in filtered_nodes
         filtered_nodes_with_test = {
             node_name: node for node_name, node in data["nodes"].items()
-            if node["resource_type"] == "test" and any(dep in filtered_nodes for dep in node["depends_on"]["nodes"])
+            if node["resource_type"] == DbtResourceType.test and any(dep in filtered_nodes for dep in node["depends_on"]["nodes"])
         }
 
         final_filtered_nodes = {**filtered_nodes, **filtered_nodes_with_test}

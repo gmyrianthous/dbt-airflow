@@ -28,7 +28,7 @@ class DbtAirflowConfig:
     def __post_init__(self) -> None:
         self._validate_execution_operator()
 
-    def _validate_execution_operator(self):
+    def _validate_execution_operator(self) -> None:
         # Validate whether the input `execution_operator` is among the supported ones.
         supported_operators = [op for op in ExecutionOperator]
         if self.execution_operator not in supported_operators:
