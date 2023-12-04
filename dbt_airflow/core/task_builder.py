@@ -125,7 +125,7 @@ class DbtAirflowTaskBuilder:
             if not data:
                 raise ManifestDataNotFound('No data was found.')
 
-        manifest = Manifest.initialization(data, tags=self.tags)
+        manifest = Manifest.load(data, tags=self.tags)
         logging.info(f'{self.manifest_path} file was loaded successfully.')
         logging.info(f'Found {manifest.get_statistics()}')
 
