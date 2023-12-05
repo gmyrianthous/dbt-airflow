@@ -27,7 +27,8 @@ def mock_manifest_data():
                     'a',
                     'b',
                     'c'
-                ]
+                ],
+                'tags': ['hourly'],
             },
             'seed.mypackage.my_seed': {
                 'name': 'my_seed',
@@ -40,7 +41,8 @@ def mock_manifest_data():
                 'package_name': 'mypackage',
                 'fqn': [
                     'a'
-                ]
+                ],
+                'tags': [],
             },
             'model.mypackage.another_model': {
                 'name': 'another_model',
@@ -53,7 +55,8 @@ def mock_manifest_data():
                     ]
                 },
                 'package_name': 'mypackage',
-                'fqn': ['d', 'e', 'f']
+                'fqn': ['d', 'e', 'f'],
+                'tags': [],
             },
             'snapshot.mypackage.my_snapshot': {
                 'name': 'my_snapshot',
@@ -66,7 +69,8 @@ def mock_manifest_data():
                     ]
                 },
                 'package_name': 'mypackage',
-                'fqn': ['a', 'b', 'c']
+                'fqn': ['a', 'b', 'c'],
+                'tags': ['finance'],
             },
             'test.mypackage.not_null_another_model_field_A.c9c3c572df': {
                 'name': 'not_null_another_model_field_A',
@@ -79,7 +83,8 @@ def mock_manifest_data():
                     ]
                 },
                 'package_name': 'mypackage',
-                'fqn': ['w', 'x', 'y']
+                'fqn': ['w', 'x', 'y'],
+                'tags': [],
             }
         }
     }

@@ -1,9 +1,9 @@
 {{
     config(
         materialized='table',
+        tags=['hourly', 'finance', 'exclude_from_hourly'],
     )
 }}
-
 SELECT
     payment_date,
     amount,

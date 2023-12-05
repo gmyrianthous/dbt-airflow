@@ -3,3 +3,6 @@ version: 2
 models:
   - name: cumulative_revenue
     description: "Cumulative revenue from sales"
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "amount > 0"

@@ -23,8 +23,14 @@ class DbtAirflowConfig:
     no_partial_parse: Optional[bool] = False
     warn_error: Optional[bool] = False
     warn_error_options: Optional[str] = None
+    include_tags: Optional[List[str]] = field(default_factory=list)
+    exclude_tags: Optional[List[str]] = field(default_factory=list)
+
 
     def __post_init__(self) -> None:
+        self._validate_execution_operator()
+
+    def _validate_execution_operator(self) -> None:
         # Validate whether the input `execution_operator` is among the supported ones.
         supported_operators = [op for op in ExecutionOperator]
         if self.execution_operator not in supported_operators:

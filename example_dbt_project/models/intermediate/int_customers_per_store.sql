@@ -1,8 +1,3 @@
-{{
-    config(
-        tags=['daily']
-    )
-}}
 SELECT
     store_id,
     COUNT(*) AS total_customers
