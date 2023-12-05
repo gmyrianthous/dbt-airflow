@@ -69,3 +69,50 @@ def test_manifest_model_get_statistics(mock_manifest):
 def test_node_deps_model_parsing(mock_node_deps):
     assert len(mock_node_deps.nodes) == 2
     assert mock_node_deps.nodes == ['seed.mypackage.my_seed', 'model.mypackage.another_model']
+
+def test_load_method(mock_manifest_data):
+    manifest = Manifest.load(data=mock_manifest_data)
+    assert len(manifest.nodes)==5
+
+def test_filter_tests_with_dependencies(mock_manifest_data):
+    filtered_nodes = {
+        'model.mypackage.another_model': {
+            'name': 'another_model',
+            'resource_type': 'model',
+            'compiled': True,
+            'depends_on': {
+                'macros': [],
+                'nodes': [
+                    'seed.mypackage.my_seed'
+                ]
+            },
+            'package_name': 'mypackage',
+            'fqn': ['d', 'e', 'f'],
+            'tags': [],
+        }}
+
+    all_nodes=mock_manifest_data['nodes']
+
+    included_tests = Manifest.filter_tests_with_dependencies(all_nodes, filtered_nodes)
+
+    assert list(included_tests.keys())==['model.mypackage.another_model', 'test.mypackage.not_null_another_model_field_A.c9c3c572df']
+
+def test_update_dependencies():
+    filtered_nodes = {
+        "node1": {"depends_on":{"nodes": ["node2", "node3"]}}, # 'node3' should be removed
+        "node2": {"depends_on":{"nodes": ["node3"]}}  # 'node3' should be removed
+    }
+    updated_nodes = Manifest.update_dependencies(filtered_nodes)
+
+    assert updated_nodes["node1"]["depends_on"]["nodes"] == ["node2"]
+    assert updated_nodes["node2"]["depends_on"]["nodes"] == []
+
+
+def test_include_by_tags(mock_manifest_data):
+    included_nodes = Manifest.include_by_tags(mock_manifest_data, ['hourly'])
+    assert 'model.mypackage.my_model' in included_nodes['nodes']
+
+def test_exclude_by_tags(mock_manifest_data):
+    included_nodes = Manifest.exclude_by_tags(mock_manifest_data, ['hourly'])
+    assert 'model.mypackage.my_model' not in included_nodes['nodes']
+

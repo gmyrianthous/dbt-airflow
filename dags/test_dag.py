@@ -73,12 +73,7 @@ with DAG(
         ),
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
-            execution_operator=ExecutionOperator.KUBERNETES,
-            operator_kwargs={
-                'name': 'test',
-                'image': 'ghcr.io/dbt-labs/dbt-bigquery:1.6.6',
-                'namespace': 'default'
-            }
+            execution_operator=ExecutionOperator.BASH,
         )
     )
 

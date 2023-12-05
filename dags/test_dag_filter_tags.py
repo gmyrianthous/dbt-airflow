@@ -10,19 +10,6 @@ from dbt_airflow.core.task_group import DbtTaskGroup
 from dbt_airflow.core.task import ExtraTask
 from dbt_airflow.operators.execution import ExecutionOperator
 
-extra_tasks = [
-    ExtraTask(
-        task_id='another_test_task',
-        operator=PythonOperator,
-        operator_args={
-            'python_callable': lambda: print('Hello world 2!'),
-        },
-        upstream_task_ids={
-            'test.example_dbt_project.int_revenue_by_date',
-        }
-    )
-]
-
 with DAG(
     dag_id='test_dag_filter_tags',
     start_date=datetime(2021, 1, 1),
@@ -45,9 +32,9 @@ with DAG(
             target='dev',
         ),
         dbt_airflow_config=DbtAirflowConfig(
-            extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
-            filter_tags=['hourly','finance']
+            include_tags=['finance'],
+            exclude_tags=['exclude_from_hourly'],
         )
     )
 

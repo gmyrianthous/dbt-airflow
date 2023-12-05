@@ -85,49 +85,73 @@ class Manifest(BaseModel):
     @classmethod
     def load(cls, data: Dict[str, Any], **kwargs) -> "Manifest":
         """
-        This method serves as a factory for creating instances of the Manifest class. It can initialize an instance
-        either with the raw data provided or with a subset of the data filtered based on tags, if provided.
+        Factory method to create a Manifest instance. It can initialize an instance with the raw data,
+        applying filters based on provided tags or excluding certain tags.
         """
-        tags = kwargs.get('tags', [])
-        if tags:
-            logging.info(f'Filtering nodes by tags {tags}')
-            return cls.filter_by_tags(data, tags)
+        include_tags = kwargs.get('include_tags', [])
+        exclude_tags = kwargs.get('exclude_tags', [])
+
+        if include_tags:
+            logging.info(f'Filtering nodes by tags {include_tags}')
+            data = cls.include_by_tags(data, include_tags)
+
+        if exclude_tags:
+            logging.info(f'Excluding nodes by tags {exclude_tags}')
+            data = cls.exclude_by_tags(data, exclude_tags)
 
         return cls(**data)
 
-
-    @classmethod
-    def filter_by_tags(cls, data, tags: List[str]) -> "Manifest":
+    @staticmethod
+    def include_by_tags(data, tags: List[str]) -> Dict[str, Any]:
         """
-        Filters a dataset of nodes based on specified tags and dependencies.
-
-        This method processes a given dataset to select nodes that match one or more of the provided tags.
-        It also includes 'test' type nodes if they have dependencies on any of the selected nodes.
-        Post filtering, it updates the dependencies of the nodes to ensure they are consistent
-        within the context of the filtered dataset.
+        Filters the dataset of nodes based on specified tags and then includes related 'test' nodes.
         """
-
-        # Step 1: Filter nodes based on tags
-        filtered_nodes = {
+        filtered_nodes_with_no_tests = {
             node_name: node for node_name, node in data["nodes"].items()
             if any(tag in node["tags"] for tag in tags)
         }
 
-        # Step 2: Filter for 'test' nodes with dependencies in filtered_nodes
-        filtered_nodes_with_test = {
-            node_name: node for node_name, node in data["nodes"].items()
+        filtered_nodes_with_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
+
+        filtered_nodes = Manifest.update_dependencies(filtered_nodes_with_tests)
+
+        return {'nodes': filtered_nodes}
+
+    @staticmethod
+    def filter_tests_with_dependencies(all_nodes, filtered_nodes):
+        """
+        Includes 'test' nodes that have dependencies on any of the nodes in the filtered list.
+        """
+
+        filtered_tests_nodes = {
+            node_name: node for node_name, node in all_nodes.items()
             if node["resource_type"] == DbtResourceType.test and any(dep in filtered_nodes for dep in node["depends_on"]["nodes"])
         }
 
-        final_filtered_nodes = {**filtered_nodes, **filtered_nodes_with_test}
+        return {**filtered_nodes, **filtered_tests_nodes}
 
-        # Step 3: Update dependencies
-        for node in final_filtered_nodes.values():
-            updated_dependent_nodes=[]
-            for dependent_node in node["depends_on"]["nodes"]:
-                if dependent_node in final_filtered_nodes.keys():
-                    updated_dependent_nodes.append(dependent_node)
-            node["depends_on"]["nodes"] = updated_dependent_nodes
+    @staticmethod
+    def update_dependencies(filtered_nodes):
+        """
+        Updates the dependencies of each node to ensure they only reference nodes present in the filtered list.
+        """
+        for node in filtered_nodes.values():
+            node["depends_on"]["nodes"] = [dep for dep in node["depends_on"]["nodes"] if dep in filtered_nodes]
+        return filtered_nodes
 
-        filtered_data = {'nodes': final_filtered_nodes}
-        return cls(**filtered_data)
+    @staticmethod
+    def exclude_by_tags(data, exclude_tags: List[str]) -> Dict[str, Any]:
+        """
+        Filters out any nodes that have tags matching any in the exclude_tags list.
+        """
+
+        filtered_nodes_with_no_tests = {
+            node_name: node for node_name, node in data["nodes"].items()
+            if not any(tag in node["tags"] for tag in exclude_tags)
+        }
+
+        filtered_nodes_and_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
+        filtered_nodes = Manifest.update_dependencies(filtered_nodes_and_tests)
+
+        return {'nodes': filtered_nodes}
+

@@ -23,7 +23,9 @@ class DbtAirflowConfig:
     no_partial_parse: Optional[bool] = False
     warn_error: Optional[bool] = False
     warn_error_options: Optional[str] = None
-    filter_tags: Optional[List[str]] = field(default_factory=list)
+    include_tags: Optional[List[str]] = field(default_factory=list)
+    exclude_tags: Optional[List[str]] = field(default_factory=list)
+
 
     def __post_init__(self) -> None:
         self._validate_execution_operator()

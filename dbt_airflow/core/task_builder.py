@@ -21,10 +21,12 @@ class DbtAirflowTaskBuilder:
         self,
         manifest_path: str,
         execution_operator: ExecutionOperator,
-        filter_tags: List[str],
+        include_tags: List[str],
+        exclude_tags: List[str],
         extra_tasks: Optional[List[ExtraTask]] = None,
     ) -> None:
-        self.filter_tags = filter_tags
+        self.include_tags = include_tags
+        self.exclude_tags = exclude_tags
         self.manifest_path = os.path.abspath(manifest_path)
         self.manifest = self._load_manifest()
         self.nodes_with_tests = set()
@@ -125,7 +127,7 @@ class DbtAirflowTaskBuilder:
             if not data:
                 raise ManifestDataNotFound('No data was found.')
 
-        manifest = Manifest.load(data, tags=self.filter_tags)
+        manifest = Manifest.load(data, include_tags=self.include_tags, exclude_tags=self.exclude_tags)
         logging.info(f'{self.manifest_path} file was loaded successfully.')
         logging.info(f'Found {manifest.get_statistics()}')
 
