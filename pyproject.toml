@@ -22,6 +22,7 @@ commitizen = "^2.40.0"
 mkdocs-material = "^8.2"
 mkdocstrings-python = "^0.8.2"
 
+
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "2.9.0"
@@ -45,3 +46,12 @@ style = [
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 99
+extend-select = [
+    "T201", # Remove print statements: https://docs.astral.sh/ruff/rules/print/
+]
+
+[tool.ruff.format]
+quote-style = "single"
