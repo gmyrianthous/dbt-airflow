@@ -74,6 +74,16 @@ def test_load_method(mock_manifest_data):
     manifest = Manifest.load(data=mock_manifest_data)
     assert len(manifest.nodes)==5
 
+def test_load_method_with_include_by_tags(mock_manifest_data):
+    manifest = Manifest.load(data=mock_manifest_data, include_tags=['hourly'])
+    assert len(manifest.nodes)==1
+    assert 'model.mypackage.my_model' in manifest.nodes
+
+def test_load_method_with_exclude_by_tags(mock_manifest_data):
+    manifest = Manifest.load(data=mock_manifest_data, exclude_tags=['hourly'])
+    assert len(manifest.nodes)==4
+    assert 'model.mypackage.my_model' not in manifest.nodes
+
 def test_filter_tests_with_dependencies(mock_manifest_data):
     filtered_nodes = {
         'model.mypackage.another_model': {
