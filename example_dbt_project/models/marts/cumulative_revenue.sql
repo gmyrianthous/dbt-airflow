@@ -1,7 +1,7 @@
 {{
     config(
         materialized='table',
-        tags=['hourly', 'finance'],
+        tags=['hourly', 'finance', 'exclude_from_hourly'],
     )
 }}
 SELECT
