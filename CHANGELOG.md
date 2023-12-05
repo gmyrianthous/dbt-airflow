@@ -1,3 +1,11 @@
+## 2.9.0 (2023-12-05)
+
+### Feat
+
+- **core**: Add support for filtering DAG based on tags (#126)
+- **core**: Add support for filtering DAG based on tags (#125)
+- **core**: Add support for filtering DAG based on tags
+
 ## 2.8.1 (2023-11-06)
 
 ### Fix
