@@ -1,9 +1,7 @@
 name: Unit testing, formatting & linting
 
 on:
-  pull_request:
-    branches:
-      - 'main'
+  - push
 env:
   POETRY_VERSION: "1.3"
   PYTHON_VERSION_FOR_BUMPING: "3.11"
