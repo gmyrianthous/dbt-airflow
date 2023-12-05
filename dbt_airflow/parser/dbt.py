@@ -83,15 +83,11 @@ class Manifest(BaseModel):
         }
 
     @classmethod
-    def load(cls, data: Dict[str, Any], **kwargs) -> "Manifest":
+    def load(cls, data: Dict[str, Any], include_tags: Optional[List[str]]=None, exclude_tags: Optional[List[str]]=None) -> "Manifest":
         """
         Factory method to create a Manifest instance. It can initialize an instance with the raw data,
         applying filters based on provided tags or excluding certain tags.
         """
-        include_tags = kwargs.get('include_tags', [])
-        exclude_tags = kwargs.get('exclude_tags', [])
-
-
         if include_tags:
             logging.info(f'Filtering nodes by tags {include_tags}')
             data = cls.include_by_tags(data, include_tags)
@@ -103,7 +99,7 @@ class Manifest(BaseModel):
         return cls(**data)
 
     @staticmethod
-    def include_by_tags(data, tags: List[str]) -> Dict[str, Any]:
+    def include_by_tags(data: Dict[str, Any], tags: List[str]) -> Dict[str, Any]:
         """
         Filters the dataset of nodes based on specified tags and then includes related 'test' nodes.
         """
@@ -119,7 +115,7 @@ class Manifest(BaseModel):
         return {'nodes': filtered_nodes}
 
     @staticmethod
-    def exclude_by_tags(data, exclude_tags: List[str]) -> Dict[str, Any]:
+    def exclude_by_tags(data: Dict[str, Any], exclude_tags: List[str]) -> Dict[str, Any]:
         """
         Filters out any nodes that have tags matching any in the exclude_tags list.
         """
@@ -135,7 +131,7 @@ class Manifest(BaseModel):
         return {'nodes': filtered_nodes}
 
     @staticmethod
-    def filter_tests_with_dependencies(all_nodes, filtered_nodes):
+    def filter_tests_with_dependencies(all_nodes: Dict[str, Any], filtered_nodes: Dict[str, Any]) -> Dict[str, Any]:
         """
         Includes 'test' nodes that have dependencies on any of the nodes in the filtered list.
         """
@@ -148,7 +144,7 @@ class Manifest(BaseModel):
         return {**filtered_nodes, **filtered_tests_nodes}
 
     @staticmethod
-    def update_dependencies(filtered_nodes):
+    def update_dependencies(filtered_nodes: Dict[str, Any]) -> Dict[str, Any]:
         """
         Updates the dependencies of each node to ensure they only reference nodes present in the filtered list.
         """
