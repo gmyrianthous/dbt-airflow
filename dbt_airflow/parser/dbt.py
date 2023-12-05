@@ -91,6 +91,7 @@ class Manifest(BaseModel):
         include_tags = kwargs.get('include_tags', [])
         exclude_tags = kwargs.get('exclude_tags', [])
 
+
         if include_tags:
             logging.info(f'Filtering nodes by tags {include_tags}')
             data = cls.include_by_tags(data, include_tags)
@@ -118,6 +119,22 @@ class Manifest(BaseModel):
         return {'nodes': filtered_nodes}
 
     @staticmethod
+    def exclude_by_tags(data, exclude_tags: List[str]) -> Dict[str, Any]:
+        """
+        Filters out any nodes that have tags matching any in the exclude_tags list.
+        """
+
+        filtered_nodes_with_no_tests = {
+            node_name: node for node_name, node in data["nodes"].items()
+            if not any(tag in node["tags"] for tag in exclude_tags)
+        }
+
+        filtered_nodes_and_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
+        filtered_nodes = Manifest.update_dependencies(filtered_nodes_and_tests)
+
+        return {'nodes': filtered_nodes}
+
+    @staticmethod
     def filter_tests_with_dependencies(all_nodes, filtered_nodes):
         """
         Includes 'test' nodes that have dependencies on any of the nodes in the filtered list.
@@ -136,22 +153,8 @@ class Manifest(BaseModel):
         Updates the dependencies of each node to ensure they only reference nodes present in the filtered list.
         """
         for node in filtered_nodes.values():
-            node["depends_on"]["nodes"] = [dep for dep in node["depends_on"]["nodes"] if dep in filtered_nodes]
+            if node["depends_on"].get('nodes') is not None:
+                node["depends_on"]["nodes"] = [dep for dep in node["depends_on"]["nodes"] if dep in filtered_nodes]
         return filtered_nodes
 
-    @staticmethod
-    def exclude_by_tags(data, exclude_tags: List[str]) -> Dict[str, Any]:
-        """
-        Filters out any nodes that have tags matching any in the exclude_tags list.
-        """
-
-        filtered_nodes_with_no_tests = {
-            node_name: node for node_name, node in data["nodes"].items()
-            if not any(tag in node["tags"] for tag in exclude_tags)
-        }
-
-        filtered_nodes_and_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
-        filtered_nodes = Manifest.update_dependencies(filtered_nodes_and_tests)
-
-        return {'nodes': filtered_nodes}
 
