@@ -17,37 +17,36 @@ with DAG(
     catchup=False,
     tags=['example'],
 ) as dag:
-
     extra_tasks = [
         ExtraTask(
             task_id='test_task',
             operator=PythonOperator,
             operator_args={
-                'python_callable': lambda: print('Hello world'),
+                'python_callable': lambda: print('Hello world'),  # noqa: T201
             },
             upstream_task_ids={
                 'model.example_dbt_project.int_customers_per_store',
-                'model.example_dbt_project.int_revenue_by_date'
-            }
+                'model.example_dbt_project.int_revenue_by_date',
+            },
         ),
         ExtraTask(
             task_id='another_test_task',
             operator=PythonOperator,
             operator_args={
-                'python_callable': lambda: print('Hello world 2!'),
+                'python_callable': lambda: print('Hello world 2!'),  # noqa: T201
             },
             upstream_task_ids={
                 'test.example_dbt_project.int_customers_per_store',
             },
             downstream_task_ids={
                 'snapshot.example_dbt_project.int_customers_per_store_snapshot',
-            }
+            },
         ),
         ExtraTask(
             task_id='test_task_3',
             operator=PythonOperator,
             operator_args={
-                'python_callable': lambda: print('Hello world 3!'),
+                'python_callable': lambda: print('Hello world 3!'),  # noqa: T201
             },
             downstream_task_ids={
                 'snapshot.example_dbt_project.int_customers_per_store_snapshot',
@@ -55,7 +54,7 @@ with DAG(
             upstream_task_ids={
                 'model.example_dbt_project.int_revenue_by_date',
             },
-        )
+        ),
     ]
 
     t1 = DummyOperator(task_id='dummy_1')
@@ -74,7 +73,7 @@ with DAG(
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
-        )
+        ),
     )
 
     t1 >> tg >> t2

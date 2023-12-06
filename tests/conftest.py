@@ -17,43 +17,26 @@ def mock_manifest_data():
                 'compiled': True,
                 'depends_on': {
                     'macros': [],
-                    'nodes': [
-                        'seed.mypackage.my_seed',
-                        'model.mypackage.another_model'
-                    ]
+                    'nodes': ['seed.mypackage.my_seed', 'model.mypackage.another_model'],
                 },
                 'package_name': 'mypackage',
-                'fqn': [
-                    'a',
-                    'b',
-                    'c'
-                ],
+                'fqn': ['a', 'b', 'c'],
                 'tags': ['hourly'],
             },
             'seed.mypackage.my_seed': {
                 'name': 'my_seed',
                 'resource_type': 'seed',
                 'compiled': True,
-                'depends_on': {
-                    'macros': [],
-                    'nodes': []
-                },
+                'depends_on': {'macros': [], 'nodes': []},
                 'package_name': 'mypackage',
-                'fqn': [
-                    'a'
-                ],
+                'fqn': ['a'],
                 'tags': [],
             },
             'model.mypackage.another_model': {
                 'name': 'another_model',
                 'resource_type': 'model',
                 'compiled': True,
-                'depends_on': {
-                    'macros': [],
-                    'nodes': [
-                        'seed.mypackage.my_seed'
-                    ]
-                },
+                'depends_on': {'macros': [], 'nodes': ['seed.mypackage.my_seed']},
                 'package_name': 'mypackage',
                 'fqn': ['d', 'e', 'f'],
                 'tags': [],
@@ -62,12 +45,7 @@ def mock_manifest_data():
                 'name': 'my_snapshot',
                 'resource_type': 'snapshot',
                 'compiled': True,
-                'depends_on': {
-                    'macros': [],
-                    'nodes': [
-                        'model.mypackage.my_model'
-                    ]
-                },
+                'depends_on': {'macros': [], 'nodes': ['model.mypackage.my_model']},
                 'package_name': 'mypackage',
                 'fqn': ['a', 'b', 'c'],
                 'tags': ['finance'],
@@ -76,17 +54,12 @@ def mock_manifest_data():
                 'name': 'not_null_another_model_field_A',
                 'resource_type': 'test',
                 'compiled': True,
-                'depends_on': {
-                    'macros': [],
-                    'nodes': [
-                        'model.mypackage.another_model'
-                    ]
-                },
+                'depends_on': {'macros': [], 'nodes': ['model.mypackage.another_model']},
                 'package_name': 'mypackage',
                 'fqn': ['w', 'x', 'y'],
                 'tags': [],
-            }
-        }
+            },
+        },
     }
 
 
@@ -107,7 +80,6 @@ def mock_node_deps(mock_node):
 
 @pytest.fixture
 def mock_dbt_airflow_task():
-
     def create_task(
         task_id='model.mypackage.my_model',
         manifest_node_name='model.mypackage.my_model',
@@ -137,7 +109,7 @@ def mock_extra_task():
     return ExtraTask(
         task_id='my_task',
         operator=PythonOperator,
-        operator_args={'python_callable': lambda: print('Hello World')},
+        operator_args={'python_callable': lambda: print('Hello World')},  # noqa: T201
         downstream_task_ids={'downstream_task_id'},
         upstream_task_ids={'upstream_task_id'},
     )

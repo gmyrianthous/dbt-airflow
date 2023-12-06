@@ -2,12 +2,10 @@ from datetime import datetime
 from pathlib import Path
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 
 from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
-from dbt_airflow.core.task import ExtraTask
 from dbt_airflow.operators.execution import ExecutionOperator
 
 with DAG(
@@ -16,8 +14,6 @@ with DAG(
     catchup=False,
     tags=['example'],
 ) as dag:
-
-
     t1 = DummyOperator(task_id='dummy_1')
     t2 = DummyOperator(task_id='dummy_2')
 
@@ -35,7 +31,7 @@ with DAG(
             execution_operator=ExecutionOperator.BASH,
             include_tags=['finance'],
             exclude_tags=['exclude_from_hourly'],
-        )
+        ),
     )
 
     t1 >> tg >> t2
