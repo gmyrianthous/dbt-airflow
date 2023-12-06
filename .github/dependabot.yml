@@ -5,15 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
+  - package-ecosystem: "pip"
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
     reviewers:
-      - "gmyrianthous"
+      - "@gmyrianthous"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     reviewers:
-      - "gmyrianthous"
+      - "@gmyrianthous"
