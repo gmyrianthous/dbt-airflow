@@ -20,9 +20,12 @@ commands that will generate one).
 from datetime import datetime
 from pathlib import Path
 
-from airflow import DAG
+from airflow. import DAG
 from airflow.operators.dummy import DummyOperator
+
+from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
+from dbt_airflow.operators.execution import ExecutionOperator
 
 
 with DAG(
@@ -31,29 +34,27 @@ with DAG(
     catchup=False,
     tags=['example'],
 ) as dag:
-  
+
     t1 = DummyOperator(task_id='dummy_1')
     t2 = DummyOperator(task_id='dummy_2')
+    
     tg = DbtTaskGroup(
         group_id='dbt-company',
-        dbt_manifest_path=Path('/path/to/target/manifest.json'),
-        dbt_target='dev',
-        dbt_project_path=Path('/path/to/dbt/project/dir'),
-        dbt_profile_path=Path('/path/to/dbt/project/profiles/dir'),
+        dbt_project_config=DbtProjectConfig(
+            project_path=Path('/opt/airflow/example_dbt_project/'),
+            manifest_path=Path('/opt/airflow/example_dbt_project/target/manifest.json'),
+        ),
+        dbt_profile_config=DbtProfileConfig(
+            profiles_path=Path('/opt/airflow/example_dbt_project/profiles'),
+            target='dev',
+        ),
+        dbt_airflow_config=DbtAirflowConfig(
+            execution_operator=ExecutionOperator.BASH,
+        ),
     )
 
-    t1 >> tg >> t2
+    t1 >> tg >> t2    
 ```
-
-`DbtTaskGroup` accepts the following arguments:
-- `group_id` (required): The name of the Task Group that will contain dbt project's tasks
-- `dbt_manifest_path` (required): The path to the `manifest.json` file
-- `dbt_target` (required):
-- `dbt_project_path` (required):
-- `dbt_profile_path` (required):
-- `create_sub_task_groups` (optional):
-- `extra_tasks` (optional): 
-
 
 ## Things to know
 Here's a list of some key aspects and assumptions of the implementation:
