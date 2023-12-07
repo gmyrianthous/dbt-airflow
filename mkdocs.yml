@@ -12,6 +12,7 @@ repo_url: https://github.com/gmyrianthous/dbt-airflow
 nav:
   - Overview: index.md
   - Supported Execution Modes: execution_operators.md
+  - Configuration: configuration.md
   - Contributing to dbt-airflow: contributing.md
 
 plugins:
