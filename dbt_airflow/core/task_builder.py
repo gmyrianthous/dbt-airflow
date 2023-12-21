@@ -94,7 +94,9 @@ class DbtAirflowTaskBuilder:
         logging.info('Creating tasks from manifest.json file')
         for manifest_node_name, node in self.manifest.nodes.items():
             if node.resource_type in [
-                DbtResourceType.model, DbtResourceType.seed, DbtResourceType.snapshot
+                DbtResourceType.model,
+                DbtResourceType.seed,
+                DbtResourceType.snapshot,
             ]:
                 self._create_task(manifest_node_name, node)
 
@@ -127,7 +129,9 @@ class DbtAirflowTaskBuilder:
             if not data:
                 raise ManifestDataNotFound('No data was found.')
 
-        manifest = Manifest.load(data, include_tags=self.include_tags, exclude_tags=self.exclude_tags)
+        manifest = Manifest.load(
+            data=data, include_tags=self.include_tags, exclude_tags=self.exclude_tags
+        )
         logging.info(f'{self.manifest_path} file was loaded successfully.')
         logging.info(f'Found {manifest.get_statistics()}')
 
@@ -152,8 +156,10 @@ class DbtAirflowTaskBuilder:
             if task.resource_type == DbtResourceType.test:
                 parent_task = self.task_list.find_task_by_id(list(task.upstream_task_ids)[0])
                 for task_other in self.task_list:
-                    if task_other.resource_type != DbtResourceType.test \
-                            and parent_task.task_id in task_other.upstream_task_ids:
+                    if (
+                        task_other.resource_type != DbtResourceType.test
+                        and parent_task.task_id in task_other.upstream_task_ids
+                    ):
                         task_other.upstream_task_ids.remove(parent_task.task_id)
                         task_other.upstream_task_ids.add(task.task_id)
 
