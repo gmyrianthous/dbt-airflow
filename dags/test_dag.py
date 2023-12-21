@@ -78,7 +78,7 @@ with DAG(
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
-            test_tasks_operator_kwargs={'retries': 2, 'retry_delay': timedelta(seconds=15)},
+            test_tasks_operator_kwargs={'retries': 0},
         ),
     )
 

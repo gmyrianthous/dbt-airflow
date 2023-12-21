@@ -78,12 +78,12 @@ For the full list of available adapters please refer to the official
 ### Building an Airflow DAG using `dbt-airflow`
 
 ```python3
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.empty import EmptyOperator
 
 from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
@@ -96,8 +96,12 @@ with DAG(
     start_date=datetime(2021, 1, 1),
     catchup=False,
     tags=['example'],
+    default_args={
+        'owner': 'airflow',
+        'retries': 1,
+        'retry_delay': timedelta(minutes=2),
+    },
 ) as dag:
-
     extra_tasks = [
         ExtraTask(
             task_id='test_task',
@@ -107,8 +111,8 @@ with DAG(
             },
             upstream_task_ids={
                 'model.example_dbt_project.int_customers_per_store',
-                'model.example_dbt_project.int_revenue_by_date'
-            }
+                'model.example_dbt_project.int_revenue_by_date',
+            },
         ),
         ExtraTask(
             task_id='another_test_task',
@@ -121,7 +125,7 @@ with DAG(
             },
             downstream_task_ids={
                 'snapshot.example_dbt_project.int_customers_per_store_snapshot',
-            }
+            },
         ),
         ExtraTask(
             task_id='test_task_3',
@@ -135,11 +139,11 @@ with DAG(
             upstream_task_ids={
                 'model.example_dbt_project.int_revenue_by_date',
             },
-        )
+        ),
     ]
 
-    t1 = DummyOperator(task_id='dummy_1')
-    t2 = DummyOperator(task_id='dummy_2')
+    t1 = EmptyOperator(task_id='dummy_1')
+    t2 = EmptyOperator(task_id='dummy_2')
 
     tg = DbtTaskGroup(
         group_id='dbt-company',
@@ -154,12 +158,8 @@ with DAG(
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
-            select=['tag:daily'],
-            exclude=['tag:hourly'],
-            full_refresh=True,
-            variables='{key: value, date: 20190101}',
-            no_partial_parse=True,
-        )
+            test_tasks_operator_kwargs={'retries': 0},
+        ),
     )
 
     t1 >> tg >> t2
