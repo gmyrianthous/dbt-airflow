@@ -2,14 +2,11 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 from airflow.models.baseoperator import BaseOperator
-from airflow.utils.decorators import apply_defaults
 
 
 class DbtBaseOperator(BaseOperator):
-
-    @apply_defaults
     def __init__(
-        self, 
+        self,
         dbt_target_profile: str,
         dbt_profile_path: Path,
         dbt_project_path: Path,

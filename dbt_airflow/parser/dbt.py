@@ -33,10 +33,10 @@ class NodeDeps(BaseModel):
         Filters out dbt tests since these will be constructed by subsequent steps
         """
         return [
-            n for n in val
-            if n.split('.')[0] in [
-                DbtResourceType.model, DbtResourceType.seed, DbtResourceType.snapshot
-            ]
+            n
+            for n in val
+            if n.split('.')[0]
+            in [DbtResourceType.model, DbtResourceType.seed, DbtResourceType.snapshot]
         ]
 
 
@@ -66,7 +66,8 @@ class Manifest(BaseModel):
     @validator('nodes')
     def filter(cls, val):
         return {
-            k: v for k, v in val.items()
+            k: v
+            for k, v in val.items()
             if v.resource_type.value in ('model', 'seed', 'snapshot', 'test')
         }
 
@@ -83,10 +84,15 @@ class Manifest(BaseModel):
         }
 
     @classmethod
-    def load(cls, data: Dict[str, Any], include_tags: Optional[List[str]]=None, exclude_tags: Optional[List[str]]=None) -> "Manifest":
+    def load(
+        cls,
+        data: Dict[str, Any],
+        include_tags: Optional[List[str]] = None,
+        exclude_tags: Optional[List[str]] = None,
+    ) -> 'Manifest':
         """
-        Factory method to create a Manifest instance. It can initialize an instance with the raw data,
-        applying filters based on provided tags or excluding certain tags.
+        Factory method to create a Manifest instance. It can initialize an instance with the raw
+        data, applying filters based on provided tags or excluding certain tags.
         """
         if include_tags:
             logging.info(f'Filtering nodes by tags {include_tags}')
@@ -101,14 +107,18 @@ class Manifest(BaseModel):
     @staticmethod
     def include_by_tags(data: Dict[str, Any], tags: List[str]) -> Dict[str, Any]:
         """
-        Filters the dataset of nodes based on specified tags and then includes related 'test' nodes.
+        Filters the dataset of nodes based on specified tags and then includes related 'test' nodes
         """
         filtered_nodes_with_no_tests = {
-            node_name: node for node_name, node in data["nodes"].items()
-            if any(tag in node["tags"] for tag in tags)
+            node_name: node
+            for node_name, node in data['nodes'].items()
+            if any(tag in node['tags'] for tag in tags)
         }
 
-        filtered_nodes_with_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
+        filtered_nodes_with_tests = Manifest.filter_tests_with_dependencies(
+            data['nodes'],
+            filtered_nodes_with_no_tests,
+        )
 
         filtered_nodes = Manifest.update_dependencies(filtered_nodes_with_tests)
 
@@ -121,24 +131,33 @@ class Manifest(BaseModel):
         """
 
         filtered_nodes_with_no_tests = {
-            node_name: node for node_name, node in data["nodes"].items()
-            if not any(tag in node["tags"] for tag in exclude_tags)
+            node_name: node
+            for node_name, node in data['nodes'].items()
+            if not any(tag in node['tags'] for tag in exclude_tags)
         }
 
-        filtered_nodes_and_tests = Manifest.filter_tests_with_dependencies(data["nodes"], filtered_nodes_with_no_tests)
+        filtered_nodes_and_tests = Manifest.filter_tests_with_dependencies(
+            data['nodes'],
+            filtered_nodes_with_no_tests,
+        )
         filtered_nodes = Manifest.update_dependencies(filtered_nodes_and_tests)
 
         return {'nodes': filtered_nodes}
 
     @staticmethod
-    def filter_tests_with_dependencies(all_nodes: Dict[str, Any], filtered_nodes: Dict[str, Any]) -> Dict[str, Any]:
+    def filter_tests_with_dependencies(
+        all_nodes: Dict[str, Any],
+        filtered_nodes: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """
         Includes 'test' nodes that have dependencies on any of the nodes in the filtered list.
         """
 
         filtered_tests_nodes = {
-            node_name: node for node_name, node in all_nodes.items()
-            if node["resource_type"] == DbtResourceType.test and any(dep in filtered_nodes for dep in node["depends_on"]["nodes"])
+            node_name: node
+            for node_name, node in all_nodes.items()
+            if node['resource_type'] == DbtResourceType.test
+            and any(dep in filtered_nodes for dep in node['depends_on']['nodes'])
         }
 
         return {**filtered_nodes, **filtered_tests_nodes}
@@ -146,11 +165,12 @@ class Manifest(BaseModel):
     @staticmethod
     def update_dependencies(filtered_nodes: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Updates the dependencies of each node to ensure they only reference nodes present in the filtered list.
+        Updates the dependencies of each node to ensure they only reference nodes present in
+        the filtered list.
         """
         for node in filtered_nodes.values():
-            if node["depends_on"].get('nodes') is not None:
-                node["depends_on"]["nodes"] = [dep for dep in node["depends_on"]["nodes"] if dep in filtered_nodes]
+            if node['depends_on'].get('nodes') is not None:
+                node['depends_on']['nodes'] = [
+                    dep for dep in node['depends_on']['nodes'] if dep in filtered_nodes
+                ]
         return filtered_nodes
-
-

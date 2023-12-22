@@ -1,7 +1,6 @@
 from typing import Any
 
 from airflow.operators.bash import BashOperator
-from airflow.utils.decorators import apply_defaults
 
 from dbt_airflow.operators.base import DbtBaseOperator
 
@@ -14,7 +13,6 @@ class DbtBashOperator(DbtBaseOperator, BashOperator):
     Airflow).
     """
 
-    @apply_defaults
     def __init__(
         self,
         **kwargs: Any,
@@ -36,6 +34,7 @@ class DbtSeedBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `seed` operation.
     """
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(dbt_base_command='seed', **kwargs)
 
@@ -44,6 +43,7 @@ class DbtTestBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `test` operation.
     """
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(dbt_base_command='test', **kwargs)
 
@@ -52,5 +52,6 @@ class DbtSnapshotBashOperator(DbtBashOperator):
     """
     Class for an Airflow Operator that executes a dbt `snapshot` operation.
     """
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(dbt_base_command='snapshot', **kwargs)

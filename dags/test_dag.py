@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.empty import EmptyOperator
 
 from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
@@ -16,6 +16,11 @@ with DAG(
     start_date=datetime(2021, 1, 1),
     catchup=False,
     tags=['example'],
+    default_args={
+        'owner': 'airflow',
+        'retries': 1,
+        'retry_delay': timedelta(minutes=2),
+    },
 ) as dag:
     extra_tasks = [
         ExtraTask(
@@ -57,8 +62,8 @@ with DAG(
         ),
     ]
 
-    t1 = DummyOperator(task_id='dummy_1')
-    t2 = DummyOperator(task_id='dummy_2')
+    t1 = EmptyOperator(task_id='dummy_1')
+    t2 = EmptyOperator(task_id='dummy_2')
 
     tg = DbtTaskGroup(
         group_id='dbt-company',
@@ -73,6 +78,7 @@ with DAG(
         dbt_airflow_config=DbtAirflowConfig(
             extra_tasks=extra_tasks,
             execution_operator=ExecutionOperator.BASH,
+            test_tasks_operator_kwargs={'retries': 0},
         ),
     )
 

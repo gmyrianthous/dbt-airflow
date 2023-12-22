@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 
-from airflow.utils.decorators import apply_defaults
 
 try:
     # apache-airflow-providers-cncf-kubernetes >= 7.4.0
@@ -23,7 +22,6 @@ from dbt_airflow.operators.base import DbtBaseOperator
 
 
 class DbtKubernetesPodOperator(DbtBaseOperator, KubernetesPodOperator):
-    @apply_defaults
     def __init__(
         self,
         **kwargs: Any,
