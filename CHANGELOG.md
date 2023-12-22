@@ -1,3 +1,9 @@
+## 2.10.0 (2023-12-22)
+
+### Feat
+
+- **core**: Add task-specific operator kwargs (#145)
+
 ## 2.9.1 (2023-12-07)
 
 ### Fix
