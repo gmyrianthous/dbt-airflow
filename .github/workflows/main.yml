@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache virtual environment and pip
-        uses: actions/cache@v3.2.3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
@@ -59,7 +59,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION_FOR_BUMPING }}
       - name: Cache virtual environment and pip
-        uses: actions/cache@v3.2.3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
