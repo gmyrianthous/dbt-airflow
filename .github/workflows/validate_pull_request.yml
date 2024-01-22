@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Cache virtual environment and pip
-        uses: actions/cache@v3.2.3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
