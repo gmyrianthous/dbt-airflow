@@ -932,13 +932,13 @@ test = ["hypothesis (>=1.11.4,!=3.79.2)", "iso8601", "pretend", "pytest (>=6.2.0
 
 [[package]]
 name = "dbt-core"
-version = "1.5.9"
+version = "1.5.10"
 description = "With dbt, data analysts and engineers can build analytics the way engineers build applications."
 optional = false
 python-versions = ">=3.7.2"
 files = [
-    {file = "dbt-core-1.5.9.tar.gz", hash = "sha256:d3e52228fe4e34eeb22bfd02e4d2983af4e4c11b3b0f5d3a5fe91c60d5e7413c"},
-    {file = "dbt_core-1.5.9-py3-none-any.whl", hash = "sha256:5322b92af2a2030c6550be25b117abbe813914bc9463eb4cb3978549d4f35ae4"},
+    {file = "dbt-core-1.5.10.tar.gz", hash = "sha256:e8f5ec2e0732be23103cee14fc7a0779bf058da68ed3106cfdf180d497d4af73"},
+    {file = "dbt_core-1.5.10-py3-none-any.whl", hash = "sha256:d28296115b8c214758d7a588e5d01d65212675bb1d192f5ae7e43d02f1043e70"},
 ]
 
 [package.dependencies]
@@ -950,7 +950,7 @@ dbt-extractor = ">=0.4.1,<0.5.0"
 hologram = ">=0.0.14,<=0.0.16"
 idna = ">=2.5,<4"
 isodate = ">=0.6,<0.7"
-Jinja2 = "3.1.2"
+Jinja2 = ">=3.1.3,<4"
 logbook = ">=1.5,<1.6"
 mashumaro = {version = "3.6", extras = ["msgpack"]}
 minimal-snowplow-tracker = "0.0.2"
@@ -995,17 +995,17 @@ files = [
 
 [[package]]
 name = "dbt-postgres"
-version = "1.5.9"
+version = "1.5.10"
 description = "The postgres adapter plugin for dbt (data build tool)"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "dbt-postgres-1.5.9.tar.gz", hash = "sha256:a7c702069efb0f23024421733fb75f7ca0756846e4a3f82e94d18f6034f51091"},
-    {file = "dbt_postgres-1.5.9-py3-none-any.whl", hash = "sha256:c75d69f23993a42fcce3b0abef368ebd31aece4eeb793726303eda0c2c779498"},
+    {file = "dbt-postgres-1.5.10.tar.gz", hash = "sha256:75a9db955eecb6d0b770d78ce71ebdd2312ac7d49573597d2469a76b5db9025f"},
+    {file = "dbt_postgres-1.5.10-py3-none-any.whl", hash = "sha256:1731400ea6d7af4f9742ebe353a675a59d5a1657b132e6e8d00b5e1d9d2ad6eb"},
 ]
 
 [package.dependencies]
-dbt-core = "1.5.9"
+dbt-core = "1.5.10"
 psycopg2-binary = ">=2.8,<3.0"
 
 [[package]]
@@ -1724,13 +1724,13 @@ files = [
 
 [[package]]
 name = "jinja2"
-version = "3.1.2"
+version = "3.1.3"
 description = "A very fast and expressive template engine."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
-    {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
+    {file = "Jinja2-3.1.3-py3-none-any.whl", hash = "sha256:7d6d50dd97d52cbc355597bd845fabfbac3f551e1f99619e39a35ce8c370b5fa"},
+    {file = "Jinja2-3.1.3.tar.gz", hash = "sha256:ac8bd6544d4bb2c9792bf3a159e80bba8fda7f07e81bc3aed565432d5925ba90"},
 ]
 
 [package.dependencies]
