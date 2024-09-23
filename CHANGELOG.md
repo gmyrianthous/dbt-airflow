@@ -1,3 +1,9 @@
+## 3.0.1 (2024-09-23)
+
+### Fix
+
+- **gha**: Update action used to release package on PyPI (#154)
+
 ## 3.0.0 (2024-09-23)
 
 ### BREAKING CHANGE
