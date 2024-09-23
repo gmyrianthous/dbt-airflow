@@ -1,3 +1,13 @@
+## 3.0.0 (2024-09-23)
+
+### BREAKING CHANGE
+
+- Upgrade to pydantic v2
+
+### Feat
+
+- **deps**: Add support for pydantic v2 (#153)
+
 ## 2.10.0 (2023-12-22)
 
 ### Feat
