@@ -9,14 +9,14 @@ readme = "README.md"
 packages = [{ include = "dbt_airflow" }]
 
 [tool.poetry.dependencies]
-python = ">=3.7.2,<4"
-dbt-core = ">=1.4.0"
+python = ">=3.9.0,<4"
+dbt-core = ">=1.9.0"
 apache-airflow = ">=2.0.0,<3"
 pydantic = ">=2.0.0,<3"
 apache-airflow-providers-cncf-kubernetes = ">=6.0.0"
 
 [tool.poetry.group.dev.dependencies]
-dbt-postgres = ">=1.4.0"
+dbt-postgres = ">=1.9.0"
 pytest = ">=7.1,<8"
 commitizen = ">=2.40,<4.0"
 mkdocs-material = ">=8.2,<10.0"
