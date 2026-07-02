@@ -20,8 +20,8 @@ commands that will generate one).
 from datetime import datetime
 from pathlib import Path
 
-from airflow. import DAG
-from airflow.operators.dummy import DummyOperator
+from airflow import DAG
+from airflow.operators.empty import EmptyOperator
 
 from dbt_airflow.core.config import DbtAirflowConfig, DbtProjectConfig, DbtProfileConfig
 from dbt_airflow.core.task_group import DbtTaskGroup
@@ -35,8 +35,8 @@ with DAG(
     tags=['example'],
 ) as dag:
 
-    t1 = DummyOperator(task_id='dummy_1')
-    t2 = DummyOperator(task_id='dummy_2')
+    t1 = EmptyOperator(task_id='dummy_1')
+    t2 = EmptyOperator(task_id='dummy_2')
     
     tg = DbtTaskGroup(
         group_id='dbt-company',
